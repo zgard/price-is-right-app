@@ -3,7 +3,7 @@
 // https://medium.com/@ochieng.grace/sequelize-your-way-to-heroku-with-express-2c31be3752e0 
 // for heroku guide to setup
 'use strict';
-const http = require('http');
+
 const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
