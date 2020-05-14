@@ -1,7 +1,6 @@
 // https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 // https://medium.com/@ochieng.grace/sequelize-your-way-to-heroku-with-express-2c31be3752e0 
 // for heroku guide to setup
-// testing
 'use strict';
 
 const fs = require('fs');
@@ -11,8 +10,6 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
-
-// console.log(process.env.DATABASE_URL); 
 
 let sequelize;
 if (config.use_env_variable) {
