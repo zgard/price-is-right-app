@@ -1,10 +1,9 @@
 // this is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 const { Sequelize } = require('sequelize');
-require('dotenv').config();  
 
 // think I need to setup env with the heroku parameters
-const sequelize = new Sequelize("DATABASE_URL");
+const sequelize = new Sequelize(process.env.DATABASE_URL);
 
 // Readline
 const readline = require('readline');
