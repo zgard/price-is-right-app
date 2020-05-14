@@ -1,4 +1,5 @@
 // this is for a heroku DB connection
+// if using heroku, make sure DATABASE_URL is in quotes
 
 module.exports = {
     "development": {

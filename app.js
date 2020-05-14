@@ -1,9 +1,23 @@
 // this is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
+// remove dotenv when running on heroku
+// require('dotenv').config();  
 const { Sequelize } = require('sequelize');
 
-// think I need to setup env with the heroku parameters
+// this works when running on heroku, but not locally
 const sequelize = new Sequelize(process.env.DATABASE_URL);
+
+// use this when running locally
+// const sequelize = new Sequelize(process.env.DATABASE_URL, {
+//     dialect: 'postgres',
+//     protocol: 'postgres',
+//     dialectOptions: {
+//         ssl: {
+//             require: true,
+//             rejectUnauthorized: false
+//         }
+//     }
+// });
 
 // Readline
 const readline = require('readline');
