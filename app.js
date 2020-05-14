@@ -29,13 +29,13 @@ const rl = readline.createInterface({
 
 // Connect to database object
 const db = require('./models')
-db.Sequelize = Sequelize;
-db.sequelize = sequelize;
+// db.Sequelize = Sequelize;
+// db.sequelize = sequelize;
 
 // Models and tables
-db.users = require('./models/users.js')(sequelize, Sequelize);
+// db.users = require('./models/users.js')(sequelize, Sequelize); 
 
-module.exports = db;
+// module.exports = db; 
 
 // Test prompt user for parameters
 rl.question('user name? ', (usernameInput) => {
