@@ -12,14 +12,24 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
+
+// experimental code
 let sequelize;
-if (process.env.DATABASE_URL) {
-  sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres'
-  });
-} else {
-  sequelize = new Sequelize(console.log(config.database, config.username, config.password, config));
-}
+if (config.use_env_variable) {
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
+  } else {
+    sequelize = new Sequelize(console.log(config.database, config.username, config.password, config));
+  }
+
+// this code works
+// let sequelize;
+// if (process.env.DATABASE_URL) {
+//   sequelize = new Sequelize(process.env.DATABASE_URL, {
+//     dialect: 'postgres'
+//   });
+// } else {
+//   sequelize = new Sequelize(console.log(config.database, config.username, config.password, config));
+// }
 
 fs
   .readdirSync(__dirname)
