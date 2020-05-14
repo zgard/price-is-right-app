@@ -2,6 +2,8 @@
 // https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 // https://medium.com/@ochieng.grace/sequelize-your-way-to-heroku-with-express-2c31be3752e0 
 // for heroku guide to setup sequelize
+require('dotenv').config();
+
 'use strict';
 
 const fs = require('fs');
