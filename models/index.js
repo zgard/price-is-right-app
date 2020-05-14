@@ -14,8 +14,7 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
-
-// experimental code
+// working code to create DB object
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
@@ -23,7 +22,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-// this code works
+// sloppy alternative code
 // let sequelize;
 // if (process.env.DATABASE_URL) {
 //   sequelize = new Sequelize(process.env.DATABASE_URL, {

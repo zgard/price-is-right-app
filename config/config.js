@@ -1,6 +1,5 @@
 // this is for a heroku DB connection
 // if using heroku, make sure DATABASE_URL is in quotes
-
 module.exports = {
     "development": {
         "dialectOptions": {
@@ -9,7 +8,6 @@ module.exports = {
                 rejectUnauthorized: false
             }
         },
-        
         "use_env_variable": "DATABASE_URL",
         "dialect": "postgres"
     },
