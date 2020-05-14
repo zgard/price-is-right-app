@@ -1,4 +1,4 @@
-// this is for a heroku DB connection
+// this is for local connection
 require('dotenv').config(); 
 
 module.exports = {
@@ -17,10 +17,10 @@ module.exports = {
         "dialect": "mysql"
     },
     "production": {
-        "use_env_variable": process.env.DATABASE_URL,
-        "dialect": "postgres",
-        "dialectOptions": {
-            "ssl": true
-        }
+        "username": "root",
+        "password": null,
+        "database": "database_production",
+        "host": "127.0.0.1",
+        "dialect": "mysql"
     }
 };

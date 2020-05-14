@@ -1,3 +1,4 @@
+// https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 const { Sequelize } = require('sequelize');
 require('dotenv').config();  
 
@@ -56,3 +57,10 @@ rl.question('user name? ', (usernameInput) => {
         })
     })
 })
+
+// listen for requests
+// db.sequelize.sync().then(function() {
+//     http.createServer(app).listen(app.get('port'), function(){
+//       console.log('Express server listening on port ' + app.get('port'));
+//     });
+//   });
