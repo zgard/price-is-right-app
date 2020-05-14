@@ -1,10 +1,10 @@
-// this is setup for Heroku
+// this is setup for local use
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 const { Sequelize } = require('sequelize');
 require('dotenv').config();  
 
-const sequelize = new Sequelize({
-    connectionString: process.env.DATABASE_URL,
+const sequelize = new Sequelize(process.env.DB_DATABASE, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOST,
     dialect: 'postgres'
 });
 

@@ -1,4 +1,5 @@
 // this is for a heroku DB connection
+require('dotenv').config(); 
 
 module.exports = {
     "development": {
