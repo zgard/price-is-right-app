@@ -2,12 +2,13 @@
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 // remove dotenv when running on heroku
 // require('dotenv').config();  
-const { Sequelize } = require('sequelize');
+// const { Sequelize } = require('sequelize'); 
 
 // this works when running on heroku, but not locally
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+// const sequelize = new Sequelize(process.env.DATABASE_URL); 
 
-// use this when running locally
+// use this code when running locally
+// also you will need to run 'sudo apt-get install -y libpq-dev' and 'npm install pg-native'
 // const sequelize = new Sequelize(process.env.DATABASE_URL, {
 //     dialect: 'postgres',
 //     protocol: 'postgres',
@@ -27,7 +28,7 @@ const rl = readline.createInterface({
 });
 
 // Connect to database object
-const db = {};
+const db = require('./models')
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 

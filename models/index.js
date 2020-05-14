@@ -1,7 +1,7 @@
 // this is for a heroku connection
 // https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 // https://medium.com/@ochieng.grace/sequelize-your-way-to-heroku-with-express-2c31be3752e0 
-// for heroku guide to setup
+// for heroku guide to setup sequelize
 'use strict';
 
 const fs = require('fs');
