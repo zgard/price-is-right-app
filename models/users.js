@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     totalCorrect: DataTypes.INTEGER,
     totalWrong: DataTypes.INTEGER,
     average: DataTypes.DOUBLE
-  }, {});
+  }, {timestamps: false});
   users.associate = function(models) {
     // associations can be defined here
   };

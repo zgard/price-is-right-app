@@ -1,11 +1,14 @@
-require('dotenv').config(); 
-
+// this is for a heroku DB connection
+// if using heroku, make sure DATABASE_URL is in quotes
 module.exports = {
     "development": {
-        "username": process.env.DB_USERNAME,
-        "password": process.env.DB_PASSWORD,
-        "database": process.env.DB_DATABASE,
-        "host": process.env.DB_HOST,
+        "dialectOptions": {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false
+            }
+        },
+        "use_env_variable": "DATABASE_URL",
         "dialect": "postgres"
     },
     "test": {
@@ -16,10 +19,8 @@ module.exports = {
         "dialect": "mysql"
     },
     "production": {
-        "username": "root",
-        "password": null,
-        "database": "database_production",
-        "host": "127.0.0.1",
-        "dialect": "mysql"
+        "use_env_variable": "DATABASE_URL",
+        "dialect": "postgres"
     }
-    };
+};
+

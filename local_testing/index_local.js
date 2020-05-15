@@ -1,9 +1,7 @@
-// this is for a heroku connection
+// this one is for local connection
 // https://devcenter.heroku.com/articles/heroku-postgresql#connecting-in-node-js
 // https://medium.com/@ochieng.grace/sequelize-your-way-to-heroku-with-express-2c31be3752e0 
-// for heroku guide to setup sequelize
-require('dotenv').config();
-
+// for heroku guide to setup
 'use strict';
 
 const fs = require('fs');
@@ -14,23 +12,12 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
-// working code to create DB object
 let sequelize;
 if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
-
-// sloppy alternative code
-// let sequelize;
-// if (process.env.DATABASE_URL) {
-//   sequelize = new Sequelize(process.env.DATABASE_URL, {
-//     dialect: 'postgres'
-//   });
-// } else {
-//   sequelize = new Sequelize(console.log(config.database, config.username, config.password, config));
-// }
 
 fs
   .readdirSync(__dirname)
