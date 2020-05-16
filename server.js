@@ -11,8 +11,8 @@ app.set('views', 'views');
 app.use(session({secret: 'abcdefg', resave: false, saveUninitialized: false}));
 
 passport.use(new googleStrategy ({
-    clientID: '432914722093-sr5934ubo3lqka8hcjur4jcn9432755p.apps.googleusercontent.com',
-    clientSecret: 'C5RgTuf1rUnPe-JcRqmlaVLl',
+    clientID: process.env.GOOGLE_CLIENTID,
+    clientSecret: process.env.GOOGLE_SECRETID,
     callbackURL: 'http://localhost:5000/auth/google/callback'
 }, function(accessToken, refreshToken, profile, cb) {
     db.users.findOrCreate({ where: {email: profile.emails[0].value, userName: profile.displayName} }).then(user => {
