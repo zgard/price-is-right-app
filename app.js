@@ -1,8 +1,8 @@
 // this is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 // remove dotenv when running on heroku
-require('dotenv').config();  
-const apiKey = process.env.API_KEY;
+// require('dotenv').config();  
+// const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
 // const { Sequelize } = require('sequelize'); 
@@ -45,19 +45,21 @@ app.set('views', 'views');
 //     });
 // });
    
-// experimental code for wegman
+// work in progress code for wegman
 app.get('/products/', (req, res) => {
-    getProductWithWagman().then((product) => {
-        if (!product) {
-            return res.redirect('/products');
-        }
-        res.render('game', { product });
+	getProductWithWagman()
+		.then((product) => {
+			if (!product) {
+				return res.redirect('/products');
+			}
+			const prices = createRandomPrices(product.pricing.price);
+			res.render('game', { product, prices });
     });
-})
+});
 
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
-}
+};
 
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
@@ -84,15 +86,14 @@ function getProductWithWagman() {
 				sku,
 				pricing: results[0].data,
                 details: results[1].data,
-            };
-            console.log(product)
-            // console.log(product.pricing.stores[0].price) 
-			return product;
+			};
+			return product; 
 		})
 		.catch((e) => console.error(e));
-}
+};
 
 function createRandomPrices(price) {
+	// return [1, 2, 3, 4]; this works
 	const min = price - price * 0.2;
 	const max = price + price * 0.2;
 	const pricesSet = new Set(
@@ -107,15 +108,18 @@ function createRandomPrices(price) {
 		return createRandomPrices(price);
 	}
 	return Array.from(pricesSet);
-}function randomInteger(max, min, price) {
-	const cents = price.toString().split('.')[1];
-	const randomNumber =
-		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
-	if (randomNumber !== price) {
-		return parseFloat(randomNumber);
-	}
-	return randomInteger(max, min, price);
-}const prices = createRandomPrices(19.75);
+};
+
+// }function randomInteger(max, min, price) {
+// 	const cents = price.toString().split('.')[1];
+// 	const randomNumber =
+// 		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
+// 	if (randomNumber !== price) {
+// 		return parseFloat(randomNumber);
+// 	}
+// 	return randomInteger(max, min, price);
+// }
+// }const prices = createRandomPrices(productPrice);
 
 app.listen('3000', function() {
     console.log('Listening on port 3000')
