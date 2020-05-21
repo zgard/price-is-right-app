@@ -68,6 +68,24 @@ app.get('/products/', (req, res) => {
     });
 });
 
+
+
+// app.get('/products/', (req, res) => {
+//     getProductWithWagman().then((product) => {
+//         if (!product) {
+//             return res.redirect('/products');
+// 		}
+// 		return product;
+// 	})
+// 	.then((product) => {
+// 		product['prices'].push(createRandomPrices(product));
+// 		res.render('game', { product });
+// 	})	
+// });
+
+
+
+
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
 };
@@ -130,10 +148,18 @@ function getProductWithWagman() {
 				details: results[1].data,
 				prices: []
             };
+ 
 			return product;
 		})
 		.then((product) => {
 			product['prices'].push(createRandomPrices(product));
+ 
+			return product;
+		})
+		.then((product) => {
+			//product['prices'].push(createRandomPrices(product.pricing.price)); //try this for alex's code
+			product['prices'].push(createRandomPrices(product));
+			console.log(product);
 			return product;
 		})
 		.catch((e) => console.error(e));
@@ -141,6 +167,7 @@ function getProductWithWagman() {
 
 function createRandomPrices(product) {
 	const price1 = product.pricing.price;
+
 	const price2 = _.round(price1 - .2, [precision=2]);
 	const price3 = _.round(price1 + 1, [precision=2]);
 	const price4 = _.round(price1 + 2, [precision=2]);
@@ -148,13 +175,11 @@ function createRandomPrices(product) {
 	_.shuffle(pricesSet);
 	return pricesSet;
 };
-
-// Alex's function
-// function createRandomPrices(price) { 
-// 	// return [1, 2, 3, 4]; this works
+//Alex's random generation:
+// function createRandomPrices(price) {
 // 	const min = price - price * 0.2;
 // 	const max = price + price * 0.2;
-// 	const pricesArray = (
+// 	const pricesSet = new Set(
 // 		[
 // 			price,
 // 			randomInteger(max, min, price),
@@ -162,6 +187,7 @@ function createRandomPrices(product) {
 // 			randomInteger(max, min, price),
 // 		].sort(() => Math.random() - 0.5)
 // 	);
+
 // 	// console.log(pricesSet); 
 // 	if (pricesSet.size < 4) {
 // 		return createRandomPrices(price);
@@ -170,6 +196,14 @@ function createRandomPrices(product) {
 // };
 
 // }function randomInteger(max, min, price) {
+
+// 	if (pricesSet.size < 4) {
+// 		return createRandomPrices(price);
+// 	}
+// 	return Array.from(pricesSet);	
+// }
+
+// function randomInteger(max, min, price) {
 // 	const cents = price.toString().split('.')[1];
 // 	const randomNumber =
 // 		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
@@ -178,7 +212,6 @@ function createRandomPrices(product) {
 // 	}
 // 	return randomInteger(max, min, price);
 // }
-// }const prices = createRandomPrices(productPrice);
 
 app.listen('3000', function() {
     console.log('Listening on port 3000')

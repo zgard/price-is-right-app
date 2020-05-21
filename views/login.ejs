@@ -1,0 +1,17 @@
+<h1>Please Login</h1>
+<% if(messages.error) { %>
+    <%= messages.error %>
+<% } %>
+<form action="/login" method="POST"><!--POST to a route with the name /register inside of localpp.js-->
+  
+    <div><!--create div for rows needed on form-->
+        <label for="email">Email: </label>
+        <input type="text" id="email" name="email" required>
+    </div>
+    <div><!--create div for rows needed on form-->
+        <label for="password">Password: </label>
+        <input type="text" id="password" name="password" required>
+    </div>
+    <button type="submit"> Login</button><!--create a submit button to submit to server-->
+</form>
+<a href="/register">Register</a> <!--create an anchor tag back to login page-->

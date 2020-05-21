@@ -1,0 +1,26 @@
+#footer {
+    background-color: black;
+    height: 50px;
+    position: absolute;
+    text-align: center;
+    width: 100vw;
+    bottom: auto;
+}
+
+#footerText {
+    color: grey;
+    font-size: 12px;
+}
+
+#container {
+    background-color: black;
+    margin: auto;
+    position: relative;
+}
+
+h2 {
+    font-size: 25px;
+    color: whitesmoke;
+    margin: 5px 0 0 20px;
+    font-weight: bold;
+}
