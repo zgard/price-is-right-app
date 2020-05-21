@@ -55,6 +55,24 @@ app.get('/products/', (req, res) => {
     });
 })
 
+
+
+// app.get('/products/', (req, res) => {
+//     getProductWithWagman().then((product) => {
+//         if (!product) {
+//             return res.redirect('/products');
+// 		}
+// 		return product;
+// 	})
+// 	.then((product) => {
+// 		product['prices'].push(createRandomPrices(product));
+// 		res.render('game', { product });
+// 	})	
+// });
+
+
+
+
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
 }
@@ -83,39 +101,62 @@ function getProductWithWagman() {
 			const product = {
 				sku,
 				pricing: results[0].data,
-                details: results[1].data,
+				details: results[1].data,
+				prices: []
             };
-            console.log(product)
+            console.log(product.pricing.price)
             // console.log(product.pricing.stores[0].price) 
+			return product;
+		})
+		.then((product) => {
+			//product['prices'].push(createRandomPrices(product.pricing.price)); //try this for alex's code
+			product['prices'].push(createRandomPrices(product));
+			console.log(product);
 			return product;
 		})
 		.catch((e) => console.error(e));
 }
 
-function createRandomPrices(price) {
-	const min = price - price * 0.2;
-	const max = price + price * 0.2;
-	const pricesSet = new Set(
-		[
-			price,
-			randomInteger(max, min, price),
-			randomInteger(max, min, price),
-			randomInteger(max, min, price),
-		].sort(() => Math.random() - 0.5)
-	);
-	if (pricesSet.size < 4) {
-		return createRandomPrices(price);
-	}
-	return Array.from(pricesSet);
-}function randomInteger(max, min, price) {
-	const cents = price.toString().split('.')[1];
-	const randomNumber =
-		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
-	if (randomNumber !== price) {
-		return parseFloat(randomNumber);
-	}
-	return randomInteger(max, min, price);
-}const prices = createRandomPrices(19.75);
+function createRandomPrices(product) {
+	const price1 = product.pricing.price;
+	const price2 = price1 - .2;
+	const price3 = price1 + 1;
+	const price4 = price1 + 2;
+	const pricesSet = [price1, price2, price3, price4];
+	//console.log(pricesSet);
+	return pricesSet;
+}
+
+//Alex's random generation:
+// function createRandomPrices(price) {
+// 	const min = price - price * 0.2;
+// 	const max = price + price * 0.2;
+// 	const pricesSet = new Set(
+// 		[
+// 			price,
+// 			randomInteger(max, min, price),
+// 			randomInteger(max, min, price),
+// 			randomInteger(max, min, price),
+// 		].sort(() => Math.random() - 0.5)
+// 	);
+// 	if (pricesSet.size < 4) {
+// 		return createRandomPrices(price);
+// 	}
+// 	return Array.from(pricesSet);	
+// }
+
+// function randomInteger(max, min, price) {
+// 	const cents = price.toString().split('.')[1];
+// 	const randomNumber =
+// 		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
+// 	if (randomNumber !== price) {
+// 		return parseFloat(randomNumber);
+// 	}
+// 	return randomInteger(max, min, price);
+// }
+
+//const prices = createRandomPrices(19.75);	
+
 
 app.listen('3000', function() {
     console.log('Listening on port 3000')

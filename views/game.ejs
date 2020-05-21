@@ -48,21 +48,24 @@
                                 <%= product.pricing.price %>
                             </h5>
                             <p>
+                                <b>SKU: </b><%= product.sku %>
+                            </p>
+                            <p>
                                 <%= product.details.name %>
                             </p>
                             <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae, itaque laudantium. Ducimus cum perspiciatis modi quaerat quas error natus omnis asperiores! Illo magnam corrupti ab, illum cum autem doloribus aspernatur?</p>
                             <div class="row">
                                 <div class="col-sm">
-                                  Price Choice
+                                  <%= product.prices[0] %>
                                 </div>
                                 <div class="col-sm">
-                                  Price Choice
+                                    <%= product.prices[1] %>
                                 </div>
                                 <div class="col-sm">
-                                  Price choice
+                                    <%= product.prices[2] %>
                                 </div>
                                 <div class="col-sm">
-                                    Price choice
+                                    <%= product.prices[3] %>
                                   </div>
                             </div>
                         </div>
