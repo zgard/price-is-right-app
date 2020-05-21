@@ -1,8 +1,8 @@
 // this is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 // remove dotenv when running on heroku
-require('dotenv').config();  
-const apiKey = process.env.API_KEY;
+// require('dotenv').config();  
+// const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
 // const { Sequelize } = require('sequelize'); 
@@ -23,6 +23,7 @@ const apiKey = process.env.API_KEY;
 //     }
 // });
 
+const _ = require('lodash');
 const axios = require('axios');
 const express = require('express');
 const app = express();
@@ -45,7 +46,19 @@ app.set('views', 'views');
 //     });
 // });
    
-// experimental code for wegman
+// Route to fetch a random product
+// app.get('/products/', (req, res) => {
+// 	getProductWithWagman()
+// 		.then((product) => {
+// 			if (!product) {
+// 				return res.redirect('/products');
+// 			}
+// 			// run the math function below to create random prices
+// 			const prices = createRandomPrices(product.pricing.price);
+// 			res.render('game', { product, prices });
+//     });
+// });
+
 app.get('/products/', (req, res) => {
     getProductWithWagman().then((product) => {
         if (!product) {
@@ -53,7 +66,7 @@ app.get('/products/', (req, res) => {
         }
         res.render('game', { product });
     });
-})
+});
 
 
 
@@ -75,7 +88,38 @@ app.get('/products/', (req, res) => {
 
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
-}
+};
+
+// function getProductWithWagman() {
+// 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
+// 	const url = 'https://api.wegmans.io';
+// 	const categories = ['steak', 'milk', 'bread', 'fruits', 'soup', 'pasta'];
+// 	let sku = null;
+// 	const category = categories[randomInteger(categories)];
+// 	return axios
+// 		.get(
+// 			`${url}/products/search?query=${category}&api-version=2018-10-18${key}`
+// 		)
+// 		.then((results) => {
+// 			sku = results.data.results[randomInteger(results.data.results)].sku;
+// 			if (sku)
+// 				return Promise.all([
+// 					axios.get(
+// 						`${url}/products/${sku}/prices/68?api-version=2018-10-18${key}`
+// 					),
+// 					axios.get(`${url}/products/${sku}?api-version=2018-10-18${key}`),
+// 				]);
+// 		})
+// 		.then((results) => {
+// 			const product = {
+// 				sku,
+// 				pricing: results[0].data,
+//                 details: results[1].data,
+// 			};
+// 			return product; 
+// 		})
+// 		.catch((e) => console.error(e));
+// };
 
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
@@ -104,8 +148,12 @@ function getProductWithWagman() {
 				details: results[1].data,
 				prices: []
             };
-            console.log(product.pricing.price)
-            // console.log(product.pricing.stores[0].price) 
+ 
+			return product;
+		})
+		.then((product) => {
+			product['prices'].push(createRandomPrices(product));
+ 
 			return product;
 		})
 		.then((product) => {
@@ -119,14 +167,14 @@ function getProductWithWagman() {
 
 function createRandomPrices(product) {
 	const price1 = product.pricing.price;
-	const price2 = price1 - .2;
-	const price3 = price1 + 1;
-	const price4 = price1 + 2;
-	const pricesSet = [price1, price2, price3, price4];
-	//console.log(pricesSet);
-	return pricesSet;
-}
 
+	const price2 = _.round(price1 - .2, [precision=2]);
+	const price3 = _.round(price1 + 1, [precision=2]);
+	const price4 = _.round(price1 + 2, [precision=2]);
+	const pricesSet = [price1, price2, price3, price4];
+	_.shuffle(pricesSet);
+	return pricesSet;
+};
 //Alex's random generation:
 // function createRandomPrices(price) {
 // 	const min = price - price * 0.2;
@@ -139,6 +187,16 @@ function createRandomPrices(product) {
 // 			randomInteger(max, min, price),
 // 		].sort(() => Math.random() - 0.5)
 // 	);
+
+// 	// console.log(pricesSet); 
+// 	if (pricesSet.size < 4) {
+// 		return createRandomPrices(price);
+// 	}
+// 	return Array.from(pricesSet);
+// };
+
+// }function randomInteger(max, min, price) {
+
 // 	if (pricesSet.size < 4) {
 // 		return createRandomPrices(price);
 // 	}
@@ -155,13 +213,12 @@ function createRandomPrices(product) {
 // 	return randomInteger(max, min, price);
 // }
 
-//const prices = createRandomPrices(19.75);	
-
-
 app.listen('3000', function() {
     console.log('Listening on port 3000')
 });
 
+
+// Databse code
 // Readline
 // const readline = require('readline');
 // const rl = readline.createInterface({
