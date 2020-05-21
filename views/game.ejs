@@ -1,76 +1,38 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<h1>
-    Welcome to the price is right!
-</h1>
-
-<!-- need to render the info into cards that are placed into this container on the page -->
-<!-- <div id="container">
-    <div class="row">
-        <div class="col-sm-6 d-flex">
-            <%# recipeArray.data.forEach(calories => { %> 
-                <div class="gameCard">
-                    <div class="card">
-                        <div class="card-body">
-                            <p>This is where the product image goes</p>
-                            <h5>
-                                <%#= calories.calories %>
-                            </h5>
-                            <p>Product Description</p>
-                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae, itaque laudantium. Ducimus cum perspiciatis modi quaerat quas error natus omnis asperiores! Illo magnam corrupti ab, illum cum autem doloribus aspernatur?</p>
-                            <div class="row">
-                                <div class="col-sm">
-                                  Price Choice
-                                </div>
-                                <div class="col-sm">
-                                  Price Choice
-                                </div>
-                                <div class="col-sm">
-                                  Price choice
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <%# }) %>
-            </div>
-        </div>
-    </div> -->
-
 <!-- experimental function with random product -->
-<div id="container">
-    <div class="row">
+<div class="container-fluid text-center">
+    <h1>
+        Welcome to the price is right!
+    </h1>
+    <div class="row justify-content-center">
         <div class="col-sm-6 d-flex">
-                <div class="gameCard">
-                    <div class="card">
-                        <div class="card-body">
-                            <img src="<%= product.details.tradeIdentifiers[0].images[0] %>" alt="">  
-                            <h5>
-                                <%= product.pricing.price %>
-                            </h5>
-                            <p>
-                                <%= product.details.name %>
-                            </p>
-                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae, itaque laudantium. Ducimus cum perspiciatis modi quaerat quas error natus omnis asperiores! Illo magnam corrupti ab, illum cum autem doloribus aspernatur?</p>
-                            <div class="row">
-                                <div class="col-sm">
-                                    <%= prices[0] %>
-                                </div>
-                                <div class="col-sm">
-                                    Price Choice
-                                </div>
-                                <div class="col-sm">
-                                    Price choice
-                                </div>
-                                <div class="col-sm">
-                                    Price choice
-                                </div>
-                            </div>
-                        </div>
+            <div class="card text-center mx-auto mt-5 bg-light" style="width: 32rem; border-radius: 5px; border: 3px solid">
+                <img class="card-img-top" src="<%= product.details.tradeIdentifiers[0].images[0] %>" alt="">  
+                <h5> True price
+                    <%= product.pricing.price %>
+                </h5>
+                <p>
+                    <%= product.details.name %>
+                </p>
+                <div class="row my-2">
+                    <div class="col-sm">
+                        <input class="btn btn-primary" type="submit" value=<%= product.prices[0][0] %>>
                     </div>
+                    <div class="col-sm">
+                        <input class="btn btn-primary" type="submit" value=<%= product.prices[0][1] %>>
+                    </div>
+                    <div class="col-sm">
+                        <input class="btn btn-primary" type="submit" value=<%= product.prices[0][2] %>>
+                    </div>
+                    <div class="col-sm">
+                        <input class="btn btn-primary" type="submit" value=<%= product.prices[0][3] %>>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
+<div>
 
 
 <!-- Iterate over the array and return the calorie count of the recipes -->
