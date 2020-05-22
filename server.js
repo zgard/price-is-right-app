@@ -15,9 +15,23 @@ const methodOverride = require('method-override');
 const initializePassport = require('./passport-config');//referencing the location where we initialize passport //initializing from passport-config
 initializePassport(
     passport,
-    email => users.find(user => user.email === email),
-    id => users.find(user => user.id === id)
-);
+    // db.users.findOrCreate({ where: {email: users.email} }).then(user => {
+    //     if (user) {
+    //         return cb(null, user);
+    //     }
+    // }),
+    // db.users.findOrCreate({ where: { id: users.id} }).then(user => {
+    //     if (user) {
+    //         return cb(null, user);
+    //     }
+    // })
+    
+    email => db.users.findOne({ where: {email: email} }),
+    id => db.users.findByPk(id)
+
+    // email => users.find(user => user.email === email),
+    // id => users.find(user => user.id === id)
+    );
 
 //need to change route for local from login to auth/local
 
@@ -36,31 +50,23 @@ app.use(methodOverride('_method'));
 
 app.use(session({secret: 'abcdefg', resave: false, saveUninitialized: false}));
 
+//make sure to always put the initialize before the passport.session
+app.use(passport.initialize());
+app.use(passport.session());
+
 passport.use(new googleStrategy ({
     clientID: process.env.GOOGLE_CLIENTID,
     clientSecret: process.env.GOOGLE_SECRETID,
     callbackURL: 'http://localhost:5000/auth/google/callback'
-}, function(accessToken, refreshToken, profile, cb) {
+}, function(accessToken, refreshToken, profile, done) {
     db.users.findOrCreate({ where: {email: profile.emails[0].value, userName: profile.displayName} }).then(user => {
         if (user) {
-            return cb(null, user);
+            return done(null, user[0]);
         }
     })
     console.log(profile);
     }
 ));
-
-//make sure to always put the initialize before the passport.session
-app.use(passport.initialize());
-app.use(passport.session());
-
-passport.serializeUser(function(user, done) {
-    done(null, user);
-});
-
-passport.deserializeUser(function(user, done) {
-    done(null, user);
-});
 
 //Check to authenticate if a user is logged in. If not, redirects user to login page
 function checkAuthenticated(req, res, next) {
@@ -72,15 +78,9 @@ function checkAuthenticated(req, res, next) {
 //Make sure no uers dont go back to the login page if they are already authenticated
 function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
-        return res.redirect('/')
+        return res.redirect('/dashboard')
     }
     next()
-}
-function ensureAuthenticated(req, res, next) {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.redirect('/login');
 }
 
 function logRequest(req, res, next) {
@@ -89,14 +89,12 @@ function logRequest(req, res, next) {
 };
 
 app.get('/auth/google', 
-    passport.authenticate('google', { scope: ['profile','email'] }),
-    (req, res) => {
-       return res.send('Dashboard bro')
-    });
+    passport.authenticate('google', { scope: ['profile','email'] }))
 
 app.get('/auth/google/callback', 
     passport.authenticate('google', {failureRedirect: '/login'}),
     function(req, res) {
+        console.log("whatever");
         res.redirect('/login');
 });
 
@@ -124,7 +122,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 ))
 
 
-app.get('/dashboard', ensureAuthenticated, logRequest, (req, res, next) => {
+app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
     res.send('Dashboard bro');
 })
 
@@ -142,19 +140,34 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(req.body.password, 10) //includes await since we are using async
-        users.push({
-            id: Date.now().toString(),
-            name: req.body.name,
+        db.users.create({
+            userName: req.body.name,
             email: req.body.email,
             password: hashedPassword
         })
+        .then(newUser => {
+        console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
+        });
+        
+        // db.users.findOne({
+        //     id: Date.now().toString(),
+        //     name: req.body.name,
+        //     email: req.body.email,
+        //     password: hashedPassword
+        // }),
+        // function(accessToken, refreshToken, profile, cb) {
+        // db.users.findOrCreate({ where: {email: req.body.email, id: Date.now().toString()} })
+        // .then(user => {
+        // if (users) {
+        //     return cb(null, users);
+        // }
         res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
     } catch {
         res.redirect('/register') //If not correct, send user back to register page
     }
     console.log(users)
     //req.body.password //corresponds to the "name" (name, email, password) on the form field
-})
+});
 //Create logout function. This function is provided by passport. Envoked using methodOverride
 //Install methodOverride library and require & use
 app.delete('/logout', (req, res) => {
