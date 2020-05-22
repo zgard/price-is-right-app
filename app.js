@@ -126,15 +126,7 @@ function getProductWithWagman() {
 				prices: []
 			};
 			console.log(product.details.tradeIdentifiers[0].images); 
-			
-			// Trying to make sure it always renders a product image
-			// attempt 1
-			// if(Array.isArray(product.details.tradeIdentifiers[0]) && 
-			// product.details.tradeIdentifiers[0].images) {
-			// 	product.details.tradeIdentifiers[0].images[0] ='https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/video/caring_for_your_kitten_video/650x350_caring_for_your_kitten_video.jpg?resize=350px:*'
-			// };
-
-			// attempt 2
+			// check to  see if product has an image in wegman API. If not, render a kitty in its place.
 			if (product.details.tradeIdentifiers[0].images.length === 0)
 			 	{
 				product.details.tradeIdentifiers[0].images[0] ='https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/video/caring_for_your_kitten_video/650x350_caring_for_your_kitten_video.jpg?resize=350px:*'
@@ -154,7 +146,7 @@ function createRandomPrices(product) {
 	const price3 = _.round(price1 + 1, [precision=2]);
 	const price4 = _.round(price1 + 2, [precision=2]);
 	const pricesSet = [price1, price2, price3, price4];
-	_.shuffle(pricesSet); // why isn't this lodash function working?
+	_.shuffle(pricesSet); // why isn't this lodash function working? need to get this working
 	console.log(pricesSet);
 	return pricesSet;
 };
@@ -167,7 +159,7 @@ function submitAnswer(){
 	console.log("this is a test")
 };
 
-// Databse code
+// database code
 // Readline
 // const readline = require('readline');
 // const rl = readline.createInterface({
@@ -227,7 +219,7 @@ function submitAnswer(){
 //   });
 
 
-// old function
+// old function (no longer used)
 // function getProductWithWagman() {
 // 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
 // 	const url = 'https://api.wegmans.io';
@@ -259,7 +251,7 @@ function submitAnswer(){
 // 		.catch((e) => console.error(e));
 // };
 
-// Alex's random math function
+// Alex's random math function (no longer used)
 // function createRandomPrices(price) { 
 // 	// return [1, 2, 3, 4]; this works
 // 	const min = price - price * 0.2;

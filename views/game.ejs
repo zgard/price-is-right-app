@@ -18,11 +18,10 @@
                 </p>
                 <div class="row my-2 mx-auto">
                     <div class="col-sm"> 
-                        <form method="POST" action="/answer"><!--enctype="multipart/form-data">-->
+                        <form method="POST" action="/answer">
                             <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
                             <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][0]%>>
                         </form>
-                        <!-- <input class="btn btn-primary" onclick="submitAnswer()" type="submit" value= product.prices[0][0] > -->
                     </div>
                     <div class="col-sm">
                         <input class="btn btn-primary" type="submit" value=<%= product.prices[0][1] %>>
