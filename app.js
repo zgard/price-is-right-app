@@ -68,7 +68,7 @@ app.get('/products', (req, res) => {
         if (!product) {
             return res.redirect('/products');
 		}
-        res.render('game', { product, submitAnswer });
+        res.render('game', { product });
     });
 });
 
@@ -129,7 +129,8 @@ function getProductWithWagman() {
 			// check to  see if product has an image in wegman API. If not, render a kitty in its place.
 			if (product.details.tradeIdentifiers[0].images.length === 0)
 			 	{
-				product.details.tradeIdentifiers[0].images[0] ='https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/video/caring_for_your_kitten_video/650x350_caring_for_your_kitten_video.jpg?resize=350px:*'
+				// change the array to this placeholder image if blank
+				product.details.tradeIdentifiers[0].images[0] ='https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg'
 				}
 			return product;
 		})
@@ -147,17 +148,13 @@ function createRandomPrices(product) {
 	const price4 = _.round(price1 + 2, [precision=2]);
 	const pricesSet = [price1, price2, price3, price4];
 	_.shuffle(pricesSet); // why isn't this lodash function working? need to get this working
-	console.log(pricesSet);
+	// console.log(pricesSet);
 	return pricesSet;
 };
 
 app.listen('3000', function() {
     console.log('Listening on port 3000')
 });
-
-function submitAnswer(){
-	console.log("this is a test")
-};
 
 // database code
 // Readline

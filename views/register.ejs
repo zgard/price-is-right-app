@@ -1,0 +1,18 @@
+<h1>Please Register</h1>
+<form action="/register" method="POST"><!--POST to a route with the name /register inside of localpp.js-->
+    <div><!--create div for rows needed on form-->
+        <label for="name">Name: </label><!--create lable for the element name-->
+        <input type="text" id="name" name="name" required><!--input text referencing the id name element and 
+            name which is how it is called on the server side. Also add required-->
+    </div>
+    <div><!--create div for rows needed on form-->
+        <label for="email">Email: </label>
+        <input type="text" id="email" name="email" required>
+    </div>
+    <div><!--create div for rows needed on form-->
+        <label for="password">Password: </label>
+        <input type="text" id="password" name="password" required>
+    </div>
+    <button type="submit"> Register</button><!--create a submit button to submit to server-->
+</form>
+<a href="/login">Login</a> <!--create an anchor tag back to login page-->
