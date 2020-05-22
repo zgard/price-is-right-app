@@ -1,6 +1,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<!-- experimental function with random product -->
+
+<!-- function with random product -->
 <div class="container-fluid text-center">
     <h1>
         Welcome to the price is right!
@@ -15,9 +16,13 @@
                 <p>
                     <%= product.details.name %>
                 </p>
-                <div class="row my-2">
-                    <div class="col-sm">
-                        <input class="btn btn-primary" type="submit" value=<%= product.prices[0][0] %>>
+                <div class="row my-2 mx-auto">
+                    <div class="col-sm"> 
+                        <form method="POST" action="/answer"><!--enctype="multipart/form-data">-->
+                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][0]%>>
+                        </form>
+                        <!-- <input class="btn btn-primary" onclick="submitAnswer()" type="submit" value= product.prices[0][0] > -->
                     </div>
                     <div class="col-sm">
                         <input class="btn btn-primary" type="submit" value=<%= product.prices[0][1] %>>
