@@ -48,8 +48,6 @@ app.use(session({
 }));
 app.use(methodOverride('_method'));
 
-app.use(session({secret: 'abcdefg', resave: false, saveUninitialized: false}));
-
 //make sure to always put the initialize before the passport.session
 app.use(passport.initialize());
 app.use(passport.session());
@@ -115,7 +113,7 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
 });
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
-    successRedirect: '/',
+    successRedirect: '/dashboard',
     failureRedirect: '/login',
     failureFlash: true
 }
@@ -135,10 +133,11 @@ app.get('/ping', (req, res, next) => {
 });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register.ejs')
+    res.render('register.ejs', {error: null})
 });
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
+        console.log(req.body)
         const hashedPassword = await bcrypt.hash(req.body.password, 10) //includes await since we are using async
         db.users.create({
             userName: req.body.name,
@@ -147,8 +146,10 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         })
         .then(newUser => {
         console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
-        });
         res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
+        }).catch(e => {
+            res.render('register', {error: 'This email already has a user account.'})
+        })
     } catch {
         res.redirect('/register') //If not correct, send user back to register page
     }
