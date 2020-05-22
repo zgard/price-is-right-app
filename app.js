@@ -66,7 +66,9 @@ app.set('views', 'views');
 app.get('/products', (req, res) => {
     getProductWithWagman().then((product) => {
         if (!product) {
-            return res.redirect('/products');
+			console.log("redirected");
+			return res.redirect('/products');
+			
 		}
         res.render('game', { product });
     });
@@ -74,22 +76,25 @@ app.get('/products', (req, res) => {
 
 let numCorrect = 0;
 let numIncorrect = 0;
+let totalQuestions = 0;
 let userAnswer = null;
 
 app.post('/answer/', (req, res) => {
 	// req should contain chosen answer. 
 	var answer = req.body.answer;
 	var correctPrice = req.body.correctPrice;
-	console.log(answer); // IT WORKS!
 	if(answer == correctPrice) {
 		userAnswer = true;
+	} else {
+		userAnswer = false;
 	}
+	totalQuestions++;
 	if(userAnswer){
 		numCorrect++;
-		console.log("you hit the correct answer!")
+		console.log(`You are correct! You have selected ${numCorrect}/${totalQuestions} correct answers.`)
 	} else {
 		numIncorrect++;
-		console.log("you hit the incorrect answer!")
+		console.log(`You are incorrect. You have selected ${numCorrect}/${totalQuestions} correct answers.`)
 	}
 	res.redirect('/products')
 });
@@ -125,7 +130,6 @@ function getProductWithWagman() {
 				details: results[1].data,
 				prices: []
 			};
-			console.log(product.details.tradeIdentifiers[0].images); 
 			// check to  see if product has an image in wegman API. If not, render a kitty in its place.
 			if (product.details.tradeIdentifiers[0].images.length === 0)
 			 	{
