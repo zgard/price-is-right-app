@@ -148,19 +148,6 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         .then(newUser => {
         console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
         });
-        
-        // db.users.findOne({
-        //     id: Date.now().toString(),
-        //     name: req.body.name,
-        //     email: req.body.email,
-        //     password: hashedPassword
-        // }),
-        // function(accessToken, refreshToken, profile, cb) {
-        // db.users.findOrCreate({ where: {email: req.body.email, id: Date.now().toString()} })
-        // .then(user => {
-        // if (users) {
-        //     return cb(null, users);
-        // }
         res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
     } catch {
         res.redirect('/register') //If not correct, send user back to register page
