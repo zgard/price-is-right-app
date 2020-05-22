@@ -1,27 +1,27 @@
 // this is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 // remove dotenv when running on heroku
-// require('dotenv').config();  
+require('dotenv').config();  
 // const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
-// const { Sequelize } = require('sequelize'); 
+const { Sequelize } = require('sequelize'); 
 
 // this works when running on heroku, but not locally
 // const sequelize = new Sequelize(process.env.DATABASE_URL); 
 
 // use this code when running locally
 // also you will need to run 'sudo apt-get install -y libpq-dev' and 'npm install pg-native'
-// const sequelize = new Sequelize(process.env.DATABASE_URL, {
-//     dialect: 'postgres',
-//     protocol: 'postgres',
-//     dialectOptions: {
-//         ssl: {
-//             require: true,
-//             rejectUnauthorized: false
-//         }
-//     }
-// });
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
+    dialect: 'postgres',
+    protocol: 'postgres',
+    dialectOptions: {
+        ssl: {
+            require: true,
+            rejectUnauthorized: false
+        }
+    }
+});
 
 const bodyParser = require('body-parser');
 const _ = require('lodash');
@@ -74,24 +74,64 @@ app.get('/products', (req, res) => {
 
 let numCorrect = 0;
 let numIncorrect = 0;
-let userAnswer = null;
+let totalAnswered = 0;
+let userAverage = 0;
+// let userAnswer = null; 
 
 app.post('/answer/', (req, res) => {
 	// req should contain chosen answer. 
-	var answer = req.body.answer;
-	var correctPrice = req.body.correctPrice;
-	console.log(answer); // IT WORKS!
+	var answer = req.body.answer
+	var correctPrice = req.body.correctPrice
+	console.log('your answer is: ' + answer)
+	console.log('the correct price: ' + correctPrice);
 	if(answer == correctPrice) {
-		userAnswer = true;
+		numCorrect++
+		console.log('your total correct: ' + numCorrect)
+		console.log('you hit the correct answer!')
 	}
-	if(userAnswer){
-		numCorrect++;
-		console.log("you hit the correct answer!")
-	} else {
-		numIncorrect++;
+	// if(userAnswer) {
+	// 	numCorrect++
+	// 	console.log(numCorrect)
+	// 	console.log("you hit the correct answer!")
+	// } 
+	else {
+		numIncorrect++
+		console.log('your total incorrect: ' + numIncorrect)
 		console.log("you hit the incorrect answer!")
 	}
 	res.redirect('/products')
+});
+
+app.post('/completed/', (req, res) => {
+	totalAnswered = numCorrect + numIncorrect;
+	console.log('you answered ' + totalAnswered + ' in total');
+	console.log('you got ' + numCorrect + ' correct')
+	userAverage = numCorrect / totalAnswered;
+	console.log('your average was ' + userAverage);
+	var completed = req.body.endGame
+	if (completed == req.body.endGame) {
+		db.users.findOrCreate({
+			// see comments below
+			where:
+				{
+					userName: 'user3', // this needs to come from passport, like a passport ID/username?
+					email: 'teddy2', // not sure we need this if we can bring in some identifier from passport
+					totalCorrect: numCorrect,
+					totalWrong: numIncorrect,
+					average: userAverage
+				}
+			})
+			.spread(function(scoreLogged, created) {
+				console.log(scoreLogged.get({
+					plain: true
+				}))
+				if (created) {
+					console.log('Scores were added to database')
+				} else {
+					console.log('This entry was already made')
+				}
+			})
+	}
 });
 
 function randomInteger(array) {
@@ -156,7 +196,8 @@ app.listen('3000', function() {
     console.log('Listening on port 3000')
 });
 
-// database code
+// Database code
+
 // Readline
 // const readline = require('readline');
 // const rl = readline.createInterface({
@@ -165,14 +206,14 @@ app.listen('3000', function() {
 // });
 
 // // Connect to database object
-// const db = require('./models') 
-// db.Sequelize = Sequelize;
-// db.sequelize = sequelize;
+const db = require('./models') 
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
 // // Models and tables
-// db.users = require('./models/users.js')(sequelize, Sequelize); 
+db.users = require('./models/users.js')(sequelize, Sequelize); 
 
-// module.exports = db; 
+module.exports = db; 
 
 // // Test prompt user for parameters
 // rl.question('user name? ', (usernameInput) => {
