@@ -1,6 +1,7 @@
+<!-- Bring in bootstrap -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<!-- experimental function with random product -->
+<!-- Function with random product -->
 <div class="container-fluid text-center">
     <h1>
         Welcome to the price is right!
@@ -16,9 +17,12 @@
                 <p>
                     <%= product.details.name %>
                 </p>
-                <div class="row my-2">
-                    <div class="col-sm">
-                        <input class="btn btn-primary" type="submit" value=<%= product.prices[0][0] %>>
+                <div class="row my-2 mx-auto">
+                    <div class="col-sm"> 
+                        <form method="POST" action="/answer">
+                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][0]%>>
+                        </form>
                     </div>
                     <div class="col-sm">
                         <input class="btn btn-primary" type="submit" value=<%= product.prices[0][1] %>>
@@ -35,33 +39,3 @@
         </div>
     </div>
 <div>
-
-
-<!-- Iterate over the array and return the calorie count of the recipes -->
-<!-- testing that the parameters are passed in from app.js -->
-
-<!-- need to make this a function that activates on button click, thereby loading all the objects as cards -->
-
-
-<!-- 
-document.getElementById('gameCard').innerHTML = renderCards(recipeArray);
-%> -->
-
-<!-- 
-// working code
-// need percent open thingy here
-//     recipeArray.data.map(calories => {
-//     // console.log(topGame); 
-//     // console.log(topGame.game.box.medium) 
-//     return`
-//         <div class="card">
-//             <div class="card-body">
-//                 <h5>
-//                     ${calories.calories}
-//                 </h5>
-//             </div>
-//         </div>
-//     `
-//     })
-    
-// %> -->

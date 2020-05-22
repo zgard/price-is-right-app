@@ -23,10 +23,14 @@
 //     }
 // });
 
+const bodyParser = require('body-parser');
 const _ = require('lodash');
 const axios = require('axios');
 const express = require('express');
 const app = express();
+
+app.use(bodyParser.urlencoded({ extended: false })) // parse application/json
+app.use(bodyParser.json())
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -46,7 +50,7 @@ app.set('views', 'views');
 //     });
 // });
    
-// Route to fetch a random product
+// Old route to fetch a random product
 // app.get('/products/', (req, res) => {
 // 	getProductWithWagman()
 // 		.then((product) => {
@@ -59,67 +63,40 @@ app.set('views', 'views');
 //     });
 // });
 
-app.get('/products/', (req, res) => {
+app.get('/products', (req, res) => {
     getProductWithWagman().then((product) => {
         if (!product) {
             return res.redirect('/products');
-        }
+		}
         res.render('game', { product });
     });
 });
 
+let numCorrect = 0;
+let numIncorrect = 0;
+let userAnswer = null;
 
-
-// app.get('/products/', (req, res) => {
-//     getProductWithWagman().then((product) => {
-//         if (!product) {
-//             return res.redirect('/products');
-// 		}
-// 		return product;
-// 	})
-// 	.then((product) => {
-// 		product['prices'].push(createRandomPrices(product));
-// 		res.render('game', { product });
-// 	})	
-// });
-
-
-
+app.post('/answer/', (req, res) => {
+	// req should contain chosen answer. 
+	var answer = req.body.answer;
+	var correctPrice = req.body.correctPrice;
+	console.log(answer); // IT WORKS!
+	if(answer == correctPrice) {
+		userAnswer = true;
+	}
+	if(userAnswer){
+		numCorrect++;
+		console.log("you hit the correct answer!")
+	} else {
+		numIncorrect++;
+		console.log("you hit the incorrect answer!")
+	}
+	res.redirect('/products')
+});
 
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
 };
-
-// function getProductWithWagman() {
-// 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
-// 	const url = 'https://api.wegmans.io';
-// 	const categories = ['steak', 'milk', 'bread', 'fruits', 'soup', 'pasta'];
-// 	let sku = null;
-// 	const category = categories[randomInteger(categories)];
-// 	return axios
-// 		.get(
-// 			`${url}/products/search?query=${category}&api-version=2018-10-18${key}`
-// 		)
-// 		.then((results) => {
-// 			sku = results.data.results[randomInteger(results.data.results)].sku;
-// 			if (sku)
-// 				return Promise.all([
-// 					axios.get(
-// 						`${url}/products/${sku}/prices/68?api-version=2018-10-18${key}`
-// 					),
-// 					axios.get(`${url}/products/${sku}?api-version=2018-10-18${key}`),
-// 				]);
-// 		})
-// 		.then((results) => {
-// 			const product = {
-// 				sku,
-// 				pricing: results[0].data,
-//                 details: results[1].data,
-// 			};
-// 			return product; 
-// 		})
-// 		.catch((e) => console.error(e));
-// };
 
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
@@ -147,78 +124,39 @@ function getProductWithWagman() {
 				pricing: results[0].data,
 				details: results[1].data,
 				prices: []
-            };
- 
+			};
+			console.log(product.details.tradeIdentifiers[0].images); 
+			// check to  see if product has an image in wegman API. If not, render a kitty in its place.
+			if (product.details.tradeIdentifiers[0].images.length === 0)
+			 	{
+				// change the array to this placeholder image if blank
+				product.details.tradeIdentifiers[0].images[0] ='https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg'
+				}
 			return product;
 		})
 		.then((product) => {
 			product['prices'].push(createRandomPrices(product));
- 
-			return product;
-		})
-		.then((product) => {
-			//product['prices'].push(createRandomPrices(product.pricing.price)); //try this for alex's code
-			product['prices'].push(createRandomPrices(product));
-			console.log(product);
 			return product;
 		})
 		.catch((e) => console.error(e));
-}
+};
 
 function createRandomPrices(product) {
 	const price1 = product.pricing.price;
-
 	const price2 = _.round(price1 - .2, [precision=2]);
 	const price3 = _.round(price1 + 1, [precision=2]);
 	const price4 = _.round(price1 + 2, [precision=2]);
 	const pricesSet = [price1, price2, price3, price4];
-	_.shuffle(pricesSet);
+	_.shuffle(pricesSet); // why isn't this lodash function working? need to get this working
+	// console.log(pricesSet);
 	return pricesSet;
 };
-//Alex's random generation:
-// function createRandomPrices(price) {
-// 	const min = price - price * 0.2;
-// 	const max = price + price * 0.2;
-// 	const pricesSet = new Set(
-// 		[
-// 			price,
-// 			randomInteger(max, min, price),
-// 			randomInteger(max, min, price),
-// 			randomInteger(max, min, price),
-// 		].sort(() => Math.random() - 0.5)
-// 	);
-
-// 	// console.log(pricesSet); 
-// 	if (pricesSet.size < 4) {
-// 		return createRandomPrices(price);
-// 	}
-// 	return Array.from(pricesSet);
-// };
-
-// }function randomInteger(max, min, price) {
-
-// 	if (pricesSet.size < 4) {
-// 		return createRandomPrices(price);
-// 	}
-// 	return Array.from(pricesSet);	
-// }
-
-// function randomInteger(max, min, price) {
-// 	const cents = price.toString().split('.')[1];
-// 	const randomNumber =
-// 		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
-// 	if (randomNumber !== price) {
-// 		return parseFloat(randomNumber);
-// 	}
-// 	return randomInteger(max, min, price);
-// }
 
 app.listen('3000', function() {
     console.log('Listening on port 3000')
 });
 
-
-// Databse code
+// database code
 // Readline
 // const readline = require('readline');
 // const rl = readline.createInterface({
@@ -226,17 +164,17 @@ app.listen('3000', function() {
 //     output: process.stdout
 // });
 
-// Connect to database object
+// // Connect to database object
 // const db = require('./models') 
 // db.Sequelize = Sequelize;
 // db.sequelize = sequelize;
 
-// Models and tables
+// // Models and tables
 // db.users = require('./models/users.js')(sequelize, Sequelize); 
 
 // module.exports = db; 
 
-// Test prompt user for parameters
+// // Test prompt user for parameters
 // rl.question('user name? ', (usernameInput) => {
 //     rl.question('please enter email ', (emailInput) => {
 //         rl.question('please enter total correct ', (userCorrect) => {
@@ -268,11 +206,75 @@ app.listen('3000', function() {
 //             })
 //         })
 //     })
-// })
+// });
 
-// listen for requests
+// // listen for requests
 // db.sequelize.sync().then(function() {
 //     http.createServer(app).listen(app.get('port'), function(){
 //       console.log('Express server listening on port ' + app.get('port'));
 //     });
 //   });
+
+
+// old function (no longer used)
+// function getProductWithWagman() {
+// 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
+// 	const url = 'https://api.wegmans.io';
+// 	const categories = ['steak', 'milk', 'bread', 'fruits', 'soup', 'pasta'];
+// 	let sku = null;
+// 	const category = categories[randomInteger(categories)];
+// 	return axios
+// 		.get(
+// 			`${url}/products/search?query=${category}&api-version=2018-10-18${key}`
+// 		)
+// 		.then((results) => {
+// 			sku = results.data.results[randomInteger(results.data.results)].sku;
+// 			if (sku)
+// 				return Promise.all([
+// 					axios.get(
+// 						`${url}/products/${sku}/prices/68?api-version=2018-10-18${key}`
+// 					),
+// 					axios.get(`${url}/products/${sku}?api-version=2018-10-18${key}`),
+// 				]);
+// 		})
+// 		.then((results) => {
+// 			const product = {
+// 				sku,
+// 				pricing: results[0].data,
+//                 details: results[1].data,
+// 			};
+// 			return product; 
+// 		})
+// 		.catch((e) => console.error(e));
+// };
+
+// Alex's random math function (no longer used)
+// function createRandomPrices(price) { 
+// 	// return [1, 2, 3, 4]; this works
+// 	const min = price - price * 0.2;
+// 	const max = price + price * 0.2;
+// 	const pricesArray = (
+// 		[
+// 			price,
+// 			randomInteger(max, min, price),
+// 			randomInteger(max, min, price),
+// 			randomInteger(max, min, price),
+// 		].sort(() => Math.random() - 0.5)
+// 	);
+// 	// console.log(pricesSet); 
+// 	if (pricesSet.size < 4) {
+// 		return createRandomPrices(price);
+// 	}
+// 	return Array.from(pricesSet);
+// };
+
+// }function randomInteger(max, min, price) {
+// 	const cents = price.toString().split('.')[1];
+// 	const randomNumber =
+// 		Math.floor(Math.random() * (max - min) + min) + '.' + cents;
+// 	if (randomNumber !== price) {
+// 		return parseFloat(randomNumber);
+// 	}
+// 	return randomInteger(max, min, price);
+// }
+// }const prices = createRandomPrices(productPrice);
