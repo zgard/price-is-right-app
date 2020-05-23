@@ -25,13 +25,13 @@ initializePassport(
     //         return cb(null, user);
     //     }
     // })
-    
-    email => db.users.findOne({ where: {email: email} }),
+
+    email => db.users.findOne({ where: { email: email } }),
     id => db.users.findByPk(id)
 
     // email => users.find(user => user.email === email),
     // id => users.find(user => user.id === id)
-    );
+);
 
 //need to change route for local from login to auth/local
 
@@ -39,6 +39,7 @@ const users = [];
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+app.use(express.static(__dirname + '/public'))
 app.use(express.urlencoded({ extended: false })); //this allows for the fields (password/email) on the form page to be access inside the req variable inside the login POST method
 app.use(flash())
 app.use(session({
@@ -57,8 +58,8 @@ passport.use(new googleStrategy({
     clientID: process.env.GOOGLE_CLIENTID,
     clientSecret: process.env.GOOGLE_SECRETID,
     callbackURL: 'http://localhost:5000/auth/google/callback'
-}, function(accessToken, refreshToken, profile, done) {
-    db.users.findOrCreate({ where: {email: profile.emails[0].value, userName: profile.displayName} }).then(user => {
+}, function (accessToken, refreshToken, profile, done) {
+    db.users.findOrCreate({ where: { email: profile.emails[0].value, userName: profile.displayName } }).then(user => {
         if (user) {
             return done(null, user[0]);
         }
@@ -86,12 +87,12 @@ function logRequest(req, res, next) {
     next();
 };
 
-app.get('/auth/google', 
-    passport.authenticate('google', { scope: ['profile','email'] }))
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] }))
 
-app.get('/auth/google/callback', 
-    passport.authenticate('google', {failureRedirect: '/login'}),
-    function(req, res) {
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
         console.log("whatever");
         res.redirect('/login');
     });
@@ -109,7 +110,7 @@ app.get('/auth/google/callback',
 //     res.render('login');
 // });
 app.get('/login', checkNotAuthenticated, (req, res) => {
-    res.render('login.ejs')
+    res.render('login.ejs') //{ message: req.flash("message") })
 });
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/dashboard',
@@ -132,7 +133,7 @@ app.get('/ping', (req, res, next) => {
 });
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
-    res.render('register.ejs', {error: null})
+    res.render('register.ejs', { error: null })
 });
 app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
@@ -143,12 +144,12 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
             email: req.body.email,
             password: hashedPassword
         })
-        .then(newUser => {
-        console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
-        res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
-        }).catch(e => {
-            res.render('register', {error: 'This email already has a user account.'})
-        })
+            .then(newUser => {
+                console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
+                res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
+            }).catch(e => {
+                res.render('register', { error: 'This email already has a user account.' })
+            })
     } catch {
         res.redirect('/register') //If not correct, send user back to register page
     }

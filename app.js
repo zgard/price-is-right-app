@@ -2,7 +2,7 @@
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
 
 // remove dotenv when running on heroku
-require('dotenv').config();  
+require('dotenv').config();
 const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
@@ -10,7 +10,7 @@ const apiKey = process.env.API_KEY;
 // const apiKey = process.env.API_KEY;
 
 // make sure sequelize is initialized above the new Seuquelize object below
-const { Sequelize } = require('sequelize'); 
+const { Sequelize } = require('sequelize');
 
 
 // this works when running on heroku, but not locally
@@ -19,14 +19,14 @@ const { Sequelize } = require('sequelize');
 // Use this code when running locally
 // also you may need to run 'sudo apt-get install -y libpq-dev' and 'npm install pg-native'
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    protocol: 'postgres',
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    }
+	dialect: 'postgres',
+	protocol: 'postgres',
+	dialectOptions: {
+		ssl: {
+			require: true,
+			rejectUnauthorized: false
+		}
+	}
 });
 
 const bodyParser = require('body-parser');
@@ -36,13 +36,13 @@ const express = require('express');
 const app = express();
 
 // Connect to sequelize database object
-const db = require('./models') 
+const db = require('./models')
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // Sequelize models and tables
-db.users = require('./models/users.js')(sequelize, Sequelize); 
-module.exports = db; 
+db.users = require('./models/users.js')(sequelize, Sequelize);
+module.exports = db;
 
 // Body parser for responses
 app.use(bodyParser.urlencoded({ extended: false })) // parse application/json
@@ -54,14 +54,14 @@ app.set('views', 'views');
 
 // Express route where game is played and JSON info is fetched from Wegman API
 app.get('/products', (req, res) => {
-    getProductWithWagman().then((product) => {
-        if (!product) {
+	getProductWithWagman().then((product) => {
+		if (!product) {
 			console.log("redirected");
 			return res.redirect('/products');
-			
+
 		}
-        res.render('game', { product });
-    });
+		res.render('game', { product });
+	});
 });
 
 
@@ -77,7 +77,7 @@ app.post('/answer/', (req, res) => {
 	var correctPrice = req.body.correctPrice
 	console.log('your answer is: ' + answer)
 	console.log('the correct price: ' + correctPrice);
-	if(answer == correctPrice) {
+	if (answer == correctPrice) {
 		numCorrect++
 		console.log('your total correct: ' + numCorrect)
 		console.log('you hit the correct answer!')
@@ -103,15 +103,15 @@ app.post('/completed/', (req, res) => {
 		db.users.findOrCreate({
 			// see comments below
 			where:
-				{
-					// userName: 'user3', // this needs to come from passport, like a passport ID/username?
-					// email: 'teddy2', // not sure we need this if we can bring in some identifier from passport
-					totalCorrect: numCorrect,
-					totalWrong: numIncorrect,
-					average: userAverage
-				}
-			})
-			.spread(function(scoreLogged, created) {
+			{
+				// userName: 'user3', // this needs to come from passport, like a passport ID/username?
+				// email: 'teddy2', // not sure we need this if we can bring in some identifier from passport
+				totalCorrect: numCorrect,
+				totalWrong: numIncorrect,
+				average: userAverage
+			}
+		})
+			.spread(function (scoreLogged, created) {
 				console.log(scoreLogged.get({
 					plain: true
 				}))
@@ -159,11 +159,10 @@ function getProductWithWagman() {
 				prices: []
 			};
 			// check to  see if product has an image in wegman API. If not, render a kitty in its place.
-			if (product.details.tradeIdentifiers[0].images.length === 0)
-			 	{
+			if (product.details.tradeIdentifiers[0].images.length === 0) {
 				// change the array to this placeholder image if blank
-				product.details.tradeIdentifiers[0].images[0] ='https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg'
-				}
+				product.details.tradeIdentifiers[0].images[0] = 'https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg'
+			}
 			return product;
 		})
 		.then((product) => {
@@ -176,9 +175,9 @@ function getProductWithWagman() {
 // randomize prices retrieved in above function; create shuffled array to send to game.ejs
 function createRandomPrices(product) {
 	const price1 = product.pricing.price;
-	const price2 = _.round(price1 - .2, [precision=2]);
-	const price3 = _.round(price1 + 1, [precision=2]);
-	const price4 = _.round(price1 + 2, [precision=2]);
+	const price2 = _.round(price1 - .2, [precision = 2]);
+	const price3 = _.round(price1 + 1, [precision = 2]);
+	const price4 = _.round(price1 + 2, [precision = 2]);
 	const pricesSet = [price1, price2, price3, price4];
 	// shuffle the array
 	var shuffledPrices = _.shuffle(pricesSet);
@@ -186,6 +185,6 @@ function createRandomPrices(product) {
 };
 
 // Hosting on port 3000
-app.listen('3000', function() {
-    console.log('Listening on port 3000')
+app.listen('3000', function () {
+	console.log('Listening on port 3000')
 });
