@@ -27,10 +27,14 @@
     "sequelize": "^5.21.8",
     "sequelize-cli": "^5.5.1"
   },
-  "devDependencies": {},
-  "scripts": {
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "nodeman": "^1.1.2",
+    "nodemon": "^2.0.4"
+  },
+    "scripts": {
     "devStart": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
