@@ -14,5 +14,8 @@
         <input type="text" id="password" name="password" required>
     </div>
     <button type="submit"> Register</button><!--create a submit button to submit to server-->
+        <% if (error) { %>
+            <p><%= error %></p>
+        <% } %>
 </form>
 <a href="/login">Login</a> <!--create an anchor tag back to login page-->

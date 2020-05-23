@@ -3,7 +3,9 @@ const bcrypt = require('bcrypt');
 
 function initialize(passport, getUserByEmail, getUserById) {
     const authenticateUser = async (email, password, done) => {
-        const user = getUserByEmail(email)
+
+        const user = await getUserByEmail(email)
+        console.log(email, password)
         if (user == null) {
             return done(null//use null since error is not on server side, 
                 , false//return user found, 
@@ -27,7 +29,9 @@ function initialize(passport, getUserByEmail, getUserById) {
 
     passport.serializeUser((user, done) => done(null, user.id))//serialize user to store inside session
     passport.deserializeUser((id, done) => {
-        return done(null, getUserById(id))
+        getUserById(id).then(user =>{
+            return done(null, user)
+        })
     })
 }
 module.exports = initialize

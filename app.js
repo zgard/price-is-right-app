@@ -3,10 +3,15 @@
 
 // remove dotenv when running on heroku
 require('dotenv').config();  
+const apiKey = process.env.API_KEY;
+// const apiKey = 'insert here'; for hard-coded api key
+
+// const { Sequelize } = require('sequelize'); 
 // const apiKey = process.env.API_KEY;
 
 // make sure sequelize is initialized above the new Seuquelize object below
 const { Sequelize } = require('sequelize'); 
+
 
 // this works when running on heroku, but not locally
 // const sequelize = new Sequelize(process.env.DATABASE_URL); 
