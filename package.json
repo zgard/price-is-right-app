@@ -34,7 +34,7 @@
   },
     "scripts": {
     "devStart": "nodemon server.js",
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "repository": {
     "type": "git",
