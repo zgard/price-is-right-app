@@ -1,103 +1,77 @@
+<!-- Bring in bootstrap -->
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
-<h1>
-    Welcome to the price is right!
-</h1>
+<!-- Function with random product -->
+<div class="container-fluid text-center">
+    <h1>
+        Welcome to the price is right!
+    </h1>
 
-<!-- need to render the info into cards that are placed into this container on the page -->
-<!-- <div id="container">
-    <div class="row">
-        <div class="col-sm-6 d-flex">
-            <%# recipeArray.data.forEach(calories => { %> 
-                <div class="gameCard">
-                    <div class="card">
-                        <div class="card-body">
-                            <p>This is where the product image goes</p>
-                            <h5>
-                                <%#= calories.calories %>
-                            </h5>
-                            <p>Product Description</p>
-                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae, itaque laudantium. Ducimus cum perspiciatis modi quaerat quas error natus omnis asperiores! Illo magnam corrupti ab, illum cum autem doloribus aspernatur?</p>
-                            <div class="row">
-                                <div class="col-sm">
-                                  Price Choice
-                                </div>
-                                <div class="col-sm">
-                                  Price Choice
-                                </div>
-                                <div class="col-sm">
-                                  Price choice
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                <%# }) %>
-            </div>
-        </div>
-    </div> -->
+    <!-- <div>You have <span id="time">01:00</span>! Good luck!</div>  -->
 
-<!-- experimental function with random product -->
-<div id="container">
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-sm-6 d-flex">
-                <div class="gameCard">
-                    <div class="card">
-                        <div class="card-body">
-                            <img src="<%= product.details.tradeIdentifiers[0].images[0] %>" alt="">  
-                            <h5>
-                                <%= product.pricing.price %>
-                            </h5>
-                            <p>
-                                <%= product.details.name %>
-                            </p>
-                            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Recusandae, itaque laudantium. Ducimus cum perspiciatis modi quaerat quas error natus omnis asperiores! Illo magnam corrupti ab, illum cum autem doloribus aspernatur?</p>
-                            <div class="row">
-                                <div class="col-sm">
-                                  Price Choice
-                                </div>
-                                <div class="col-sm">
-                                  Price Choice
-                                </div>
-                                <div class="col-sm">
-                                  Price choice
-                                </div>
-                                <div class="col-sm">
-                                    Price choice
-                                  </div>
-                            </div>
-                        </div>
+            <div class="card text-center mx-auto mt-5 bg-light" style="width: 32rem; border-radius: 5px; border: 3px solid">
+                <img class="card-img-top" src="<%= product.details.tradeIdentifiers[0].images[0] %>" alt="">  
+                <h5> True price
+                    <%= product.pricing.price %>
+                </h5>
+                <h3>
+                    <%= product.details.name %>
+                </h3>
+                <div class="row my-2 mx-auto">
+                    <div class="col-sm"> 
+                        <form method="POST" action="/answer">
+                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][0]%>>
+                        </form>
                     </div>
+                    <div class="col-sm">
+                        <form method="POST" action="/answer">
+                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][1]%>>
+                        </form>
+                    </div>
+                    <div class="col-sm">
+                        <form method="POST" action="/answer">
+                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][2]%>>
+                        </form>
+                    </div>
+                    <div class="col-sm">
+                        <form method="POST" action="/answer">
+                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][3]%>>
+                        </form>
+                    </div>
+                </div>
+                <form method="POST" action="/completed">
+                    <input class="btn btn-primary btn-lg btn-block" type="submit" name="endGame" value="End Game"></input>
+                </form>
             </div>
         </div>
     </div>
+<div>
 
+<!-- Timer on top of page -->
+<!-- <script>
+ window.onload = function () {
+    var display = document.querySelector('#time'),
+        timer = new CountDownTimer(5),
+        timeObj = CountDownTimer.parse(5);
 
-
-<!-- Iterate over the array and return the calorie count of the recipes -->
-<!-- testing that the parameters are passed in from app.js -->
-
-<!-- need to make this a function that activates on button click, thereby loading all the objects as cards -->
-
-
-<!-- 
-document.getElementById('gameCard').innerHTML = renderCards(recipeArray);
-%> -->
-
-<!-- 
-// working code
-// need percent open thingy here
-//     recipeArray.data.map(calories => {
-//     // console.log(topGame); 
-//     // console.log(topGame.game.box.medium) 
-//     return`
-//         <div class="card">
-//             <div class="card-body">
-//                 <h5>
-//                     ${calories.calories}
-//                 </h5>
-//             </div>
-//         </div>
-//     `
-//     })
+    format(timeObj.minutes, timeObj.seconds);
     
-// %> -->
+    timer.onTick(format);
+    
+    document.querySelector('button').addEventListener('click', function () {
+        timer.start();
+    });
+    
+    function format(minutes, seconds) {
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+        display.textContent = minutes + ':' + seconds;
+    }
+};
+</script> -->

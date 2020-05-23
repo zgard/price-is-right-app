@@ -52,7 +52,8 @@ app.use(methodOverride('_method'));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new googleStrategy ({
+
+passport.use(new googleStrategy({
     clientID: process.env.GOOGLE_CLIENTID,
     clientSecret: process.env.GOOGLE_SECRETID,
     callbackURL: 'http://localhost:5000/auth/google/callback'
@@ -63,9 +64,8 @@ passport.use(new googleStrategy ({
         }
     })
     console.log(profile);
-    }
+}
 ));
-
 //Check to authenticate if a user is logged in. If not, redirects user to login page
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
@@ -94,8 +94,7 @@ app.get('/auth/google/callback',
     function(req, res) {
         console.log("whatever");
         res.redirect('/login');
-});
-
+    });
 // app.get('/logout', function(req, res, next) {
 //     console.log('logging out');
 //     req.logout();
