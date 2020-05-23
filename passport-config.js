@@ -6,6 +6,7 @@ function initialize(passport, getUserByEmail, getUserById) {
 
         const user = await getUserByEmail(email)
         console.log(email, password)
+        
         if (user == null) {
             return done(null//use null since error is not on server side, 
                 , false//return user found, 

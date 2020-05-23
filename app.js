@@ -1,7 +1,6 @@
-// this is setup for Heroku
+// This is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
-
-// remove dotenv when running on heroku
+// Remove dotenv when running on heroku
 require('dotenv').config();  
 const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
@@ -9,15 +8,14 @@ const apiKey = process.env.API_KEY;
 // const { Sequelize } = require('sequelize'); 
 // const apiKey = process.env.API_KEY;
 
-// make sure sequelize is initialized above the new Seuquelize object below
+// Make sure sequelize is initialized above the new Seuquelize object below
 const { Sequelize } = require('sequelize'); 
 
-
-// this works when running on heroku, but not locally
+// This works when running on heroku, but not locally
 // const sequelize = new Sequelize(process.env.DATABASE_URL); 
 
 // Use this code when running locally
-// also you may need to run 'sudo apt-get install -y libpq-dev' and 'npm install pg-native'
+// You may need to run 'sudo apt-get install -y libpq-dev' and 'npm install pg-native'
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     protocol: 'postgres',
@@ -35,7 +33,7 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
-// zach's passport code
+// Zach's passport code
 if (process.env.NODE_ENV !== 'production') {
     require('dotenv').config()
 };
@@ -54,20 +52,18 @@ initializePassport(
     id => db.users.findByPk(id)
     );
 
-//need to change route for local from login to auth/local
+// Need to change route for local from login to auth/local
 
-// const users = []; 
-
-app.use(express.urlencoded({ extended: false })); //this allows for the fields (password/email) on the form page to be access inside the req variable inside the login POST method
+app.use(express.urlencoded({ extended: false })); // This allows for the fields (password/email) on the form page to be access inside the req variable inside the login POST method
 app.use(flash())
 app.use(session({
-    secret: process.env.SESSION_SECRET, //We need to ask about this
-    resave: false,//should we resave session variables if nothing changes? 
-    saveUninitialized: false //should we save an empty value in the session if there is not value?
+    secret: process.env.SESSION_SECRET, // We need to ask about this
+    resave: false,// Should we resave session variables if nothing changes? 
+    saveUninitialized: false // Should we save an empty value in the session if there is not value?
 }));
 app.use(methodOverride('_method'));
 
-//make sure to always put the initialize before the passport.session
+// Make sure to always put the initialize before the passport.session
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -78,7 +74,6 @@ passport.use(new googleStrategy({
 	}, 
 	function(accessToken, refreshToken, profile, done) 
 	{
-		console.log(profile);
 		// userEmail = profile.emails[0].value; 
     	db.users.findOrCreate({ 
 			where: {
@@ -90,17 +85,16 @@ passport.use(new googleStrategy({
             	return done(null, user[0]);
         	}
 		})
-		// console.log(profile); 
 	}
 ));
-//Check to authenticate if a user is logged in. If not, redirects user to login page
+// Check to authenticate if a user is logged in. If not, redirects user to login page
 function checkAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next()
     }
     res.redirect('/login')
 }
-//Make sure no uers dont go back to the login page if they are already authenticated
+// Make sure no uers dont go back to the login page if they are already authenticated
 function checkNotAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return res.redirect('/dashboard')
@@ -128,11 +122,15 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
 });
 
+// app.get('/user', function(req, res, next) {
+// 	res.send(req.user.email);
+// })
+
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/dashboard',
     failureRedirect: '/login',
     failureFlash: true
-}
+	},
 ))
 
 app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
@@ -163,8 +161,8 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     // console.log(users) 
     //req.body.password //corresponds to the "name" (name, email, password) on the form field
 });
-//Create logout function. This function is provided by passport. Envoked using methodOverride
-//Install methodOverride library and require & use
+// Create logout function. This function is provided by passport. Envoked using methodOverride
+// Install methodOverride library and require & use
 
 app.delete('/logout', (req, res) => {
     req.logOut()
@@ -208,6 +206,7 @@ let userAverage = 0;
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
+	console.log(req.user)
 	var answer = req.body.answer
 	var correctPrice = req.body.correctPrice
 	console.log('your answer is: ' + answer)
@@ -235,37 +234,32 @@ app.post('/completed/', (req, res) => {
 	console.log('your average was ' + userAverage);
 	var completed = req.body.endGame
 	if (completed) {
-		db.users.findOrCreate({
-			// see comments below
-			where:
-				{
-            		// email: req.body.email, need parms from passport user session
-					userName: 'user3', // this needs to come from passport, like a passport ID/username?
-					totalCorrect: numCorrect,
-					totalWrong: numIncorrect,
-					average: userAverage
+		db.users.update({totalCorrect: numCorrect, totalWrong: numIncorrect, average: userAverage}, {
+				where: {
+					email:req.user.email
 				}
 			})
-			.spread(function(scoreLogged, created) {
-				console.log(scoreLogged.get({
-					plain: true
-				}))
-				if (created) {
-					console.log('Scores were added to database')
-				} else {
-					console.log('This entry was already made')
-				}
-			})
-			.then(res.redirect('/products')) // this should redirect to the dashboard where it displays the user stats.
+			// need to fix this so it works with new update function
+			// .spread(function(scoreLogged, updated) {
+			// 	console.log(scoreLogged.get({
+			// 		plain: true
+			// 	}))
+			// 	if (updated) {
+			// 		console.log('Scores were added to database')
+			// 	} else {
+			// 		console.log('This entry was already made')
+			// 	}
+			// })
+			.then(res.redirect('/dashboard')) // this should redirect to the dashboard where it displays the user stats.
 	}
 });
 
-// this function is used below to randomize values
+// This function is used below to randomize values
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
 };
 
-// main API function; returns JSON of product info then randomizes it/shuffles. 
+// Main API function; returns JSON of product info then randomizes it/shuffles. 
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
 	const url = 'https://api.wegmans.io';
@@ -293,10 +287,10 @@ function getProductWithWagman() {
 				details: results[1].data,
 				prices: []
 			};
-			// check to  see if product has an image in wegman API. If not, render a kitty in its place.
+			// Check to  see if product has an image in wegman API. If not, render a kitty in its place.
 			if (product.details.tradeIdentifiers[0].images.length === 0)
 			 	{
-				// change the array to this placeholder image if blank
+				// Change the array to this placeholder image if blank
 				product.details.tradeIdentifiers[0].images[0] ='https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg'
 				}
 			return product;
@@ -308,14 +302,14 @@ function getProductWithWagman() {
 		.catch((e) => console.error(e));
 };
 
-// randomize prices retrieved in above function; create shuffled array to send to game.ejs
+// Randomize prices retrieved in above function; create shuffled array to send to game.ejs
 function createRandomPrices(product) {
 	const price1 = product.pricing.price;
 	const price2 = _.round(price1 - .2, [precision=2]);
 	const price3 = _.round(price1 + 1, [precision=2]);
 	const price4 = _.round(price1 + 2, [precision=2]);
 	const pricesSet = [price1, price2, price3, price4];
-	// shuffle the array
+	// Shuffle the array
 	var shuffledPrices = _.shuffle(pricesSet);
 	return shuffledPrices;
 };
