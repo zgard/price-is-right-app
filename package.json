@@ -29,7 +29,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "devStart": "nodemon server.js"
+    "devStart": "nodemon server.js",
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",
@@ -41,5 +42,5 @@
     "url": "https://github.com/zgard/price-is-right-app/issues"
   },
   "homepage": "https://github.com/zgard/price-is-right-app#readme",
-  "description": ""
+  "description": "Guess the right price is a web app designed for users to guess the right price of a product shown in the GUI.  The game was designed to give points for the right answers."
 }
