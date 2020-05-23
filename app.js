@@ -1,6 +1,5 @@
 // this is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
-
 // remove dotenv when running on heroku
 require('dotenv').config();  
 const apiKey = process.env.API_KEY;
@@ -78,7 +77,6 @@ passport.use(new googleStrategy({
 	}, 
 	function(accessToken, refreshToken, profile, done) 
 	{
-		console.log(profile);
 		// userEmail = profile.emails[0].value; 
     	db.users.findOrCreate({ 
 			where: {
@@ -90,7 +88,6 @@ passport.use(new googleStrategy({
             	return done(null, user[0]);
         	}
 		})
-		// console.log(profile); 
 	}
 ));
 //Check to authenticate if a user is logged in. If not, redirects user to login page
@@ -128,11 +125,15 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
     res.render('login.ejs')
 });
 
+// app.get('/user', function(req, res, next) {
+// 	res.send(req.user.email);
+// })
+
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
     successRedirect: '/dashboard',
     failureRedirect: '/login',
     failureFlash: true
-}
+	},
 ))
 
 app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
@@ -208,6 +209,7 @@ let userAverage = 0;
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
+	console.log(req.user)
 	var answer = req.body.answer
 	var correctPrice = req.body.correctPrice
 	console.log('your answer is: ' + answer)
@@ -235,37 +237,32 @@ app.post('/completed/', (req, res) => {
 	console.log('your average was ' + userAverage);
 	var completed = req.body.endGame
 	if (completed) {
-		db.users.findOrCreate({
-			// see comments below
-			where:
-				{
-            		// email: req.body.email, need parms from passport user session
-					userName: 'user3', // this needs to come from passport, like a passport ID/username?
-					totalCorrect: numCorrect,
-					totalWrong: numIncorrect,
-					average: userAverage
+		db.users.update({totalCorrect: numCorrect, totalWrong: numIncorrect, average: userAverage}, {
+				where: {
+					email:req.user.email
 				}
 			})
-			.spread(function(scoreLogged, created) {
-				console.log(scoreLogged.get({
-					plain: true
-				}))
-				if (created) {
-					console.log('Scores were added to database')
-				} else {
-					console.log('This entry was already made')
-				}
-			})
+			// need to fix this so it works with new update function
+			// .spread(function(scoreLogged, updated) {
+			// 	console.log(scoreLogged.get({
+			// 		plain: true
+			// 	}))
+			// 	if (updated) {
+			// 		console.log('Scores were added to database')
+			// 	} else {
+			// 		console.log('This entry was already made')
+			// 	}
+			// })
 			.then(res.redirect('/products')) // this should redirect to the dashboard where it displays the user stats.
 	}
 });
 
-// this function is used below to randomize values
+// This function is used below to randomize values
 function randomInteger(array) {
 	return Math.floor(Math.random() * array.length);
 };
 
-// main API function; returns JSON of product info then randomizes it/shuffles. 
+// Main API function; returns JSON of product info then randomizes it/shuffles. 
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
 	const url = 'https://api.wegmans.io';
