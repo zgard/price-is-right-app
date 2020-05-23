@@ -35,7 +35,7 @@ const db = require('./models')
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// sequelize models and tables
+// Sequelize models and tables
 db.users = require('./models/users.js')(sequelize, Sequelize); 
 module.exports = db; 
 
@@ -47,7 +47,7 @@ app.use(bodyParser.json())
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-// main express route where game is played and JSON info is fetched from Wegman API
+// Express route where game is played and JSON info is fetched from Wegman API
 app.get('/products', (req, res) => {
     getProductWithWagman().then((product) => {
         if (!product) {
@@ -58,15 +58,14 @@ app.get('/products', (req, res) => {
 });
 
 
-// globals for use with express answer logging in below route
+// Globals for use with express answer logging in below route
 let numCorrect = 0;
 let numIncorrect = 0;
 let totalAnswered = 0;
 let userAverage = 0;
-// let userAnswer = null; don't think we need a truse/false condition for answers
+// Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
-	// req contains chosen answer, but price array still isn't sorted
 	var answer = req.body.answer
 	var correctPrice = req.body.correctPrice
 	console.log('your answer is: ' + answer)
@@ -76,12 +75,6 @@ app.post('/answer/', (req, res) => {
 		console.log('your total correct: ' + numCorrect)
 		console.log('you hit the correct answer!')
 	}
-	// don't think we need a true-false condition check
-	// if(userAnswer) {
-	// 	numCorrect++
-	// 	console.log(numCorrect)
-	// 	console.log("you hit the correct answer!")
-	// } 
 	else {
 		numIncorrect++
 		console.log('your total incorrect: ' + numIncorrect)
@@ -90,7 +83,7 @@ app.post('/answer/', (req, res) => {
 	res.redirect('/products')
 });
 
-// route after user clicks end game button in game.ejs; tally up scores, average, and post to database
+// Route after user clicks end game button in game.ejs; tally up scores, average, and post to database
 app.post('/completed/', (req, res) => {
 	totalAnswered = numCorrect + numIncorrect;
 	console.log('you answered ' + totalAnswered + ' in total');
@@ -103,8 +96,8 @@ app.post('/completed/', (req, res) => {
 			// see comments below
 			where:
 				{
-					userName: 'user3', // this needs to come from passport, like a passport ID/username?
-					email: 'teddy2', // not sure we need this if we can bring in some identifier from passport
+					// userName: 'user3', // this needs to come from passport, like a passport ID/username?
+					// email: 'teddy2', // not sure we need this if we can bring in some identifier from passport
 					totalCorrect: numCorrect,
 					totalWrong: numIncorrect,
 					average: userAverage
@@ -180,12 +173,12 @@ function createRandomPrices(product) {
 	const price3 = _.round(price1 + 1, [precision=2]);
 	const price4 = _.round(price1 + 2, [precision=2]);
 	const pricesSet = [price1, price2, price3, price4];
-	_.shuffle(pricesSet); // why isn't this lodash function working? need to get this working
-	// console.log(pricesSet);
-	return pricesSet;
+	// shuffle the array
+	var shuffledPrices = _.shuffle(pricesSet);
+	return shuffledPrices;
 };
 
-// hosting on port 3000
+// Hosting on port 3000
 app.listen('3000', function() {
     console.log('Listening on port 3000')
 });
