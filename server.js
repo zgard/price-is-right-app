@@ -120,7 +120,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 
 
 app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
-    res.send('Dashboard bro');
+    res.render('dashboard');
 })
 
 app.get('/logged-out', (req, res, next) => {
@@ -157,6 +157,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
 });
 //Create logout function. This function is provided by passport. Envoked using methodOverride
 //Install methodOverride library and require & use
+
 app.delete('/logout', (req, res) => {
     req.logOut()
     res.redirect('/login')
