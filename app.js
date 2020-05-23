@@ -1,15 +1,19 @@
 // This is setup for Heroku
 // https://nuxtjs.org/faq/heroku-deployment/ for alternative branch deployment
-// Remove dotenv when running on heroku
-require('dotenv').config();  
+
+
+// remove dotenv when running on heroku
+require('dotenv').config();
+
 const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
 // const { Sequelize } = require('sequelize'); 
 // const apiKey = process.env.API_KEY;
 
-// Make sure sequelize is initialized above the new Seuquelize object below
-const { Sequelize } = require('sequelize'); 
+// make sure sequelize is initialized above the new Seuquelize object below
+const { Sequelize } = require('sequelize');
+
 
 // This works when running on heroku, but not locally
 // const sequelize = new Sequelize(process.env.DATABASE_URL); 
@@ -17,14 +21,14 @@ const { Sequelize } = require('sequelize');
 // Use this code when running locally
 // You may need to run 'sudo apt-get install -y libpq-dev' and 'npm install pg-native'
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
-    dialect: 'postgres',
-    protocol: 'postgres',
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false
-        }
-    }
+	dialect: 'postgres',
+	protocol: 'postgres',
+	dialectOptions: {
+		ssl: {
+			require: true,
+			rejectUnauthorized: false
+		}
+	}
 });
 
 const bodyParser = require('body-parser');
@@ -170,13 +174,13 @@ app.delete('/logout', (req, res) => {
 })
 
 // Connect to sequelize database object
-const db = require('./models') 
+const db = require('./models')
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 // Sequelize models and tables
-db.users = require('./models/users.js')(sequelize, Sequelize); 
-module.exports = db; 
+db.users = require('./models/users.js')(sequelize, Sequelize);
+module.exports = db;
 
 // Body parser for responses
 app.use(bodyParser.urlencoded({ extended: false })) // parse application/json
@@ -188,14 +192,14 @@ app.set('views', 'views');
 
 // Express route where game is played and JSON info is fetched from Wegman API
 app.get('/products', (req, res) => {
-    getProductWithWagman().then((product) => {
-        if (!product) {
+	getProductWithWagman().then((product) => {
+		if (!product) {
 			console.log("redirected");
 			return res.redirect('/products');
-			
+
 		}
-        res.render('game', { product });
-    });
+		res.render('game', { product });
+	});
 });
 
 // Globals for use with express answer logging in below route
@@ -211,7 +215,7 @@ app.post('/answer/', (req, res) => {
 	var correctPrice = req.body.correctPrice
 	console.log('your answer is: ' + answer)
 	console.log('the correct price: ' + correctPrice);
-	if(answer == correctPrice) {
+	if (answer == correctPrice) {
 		numCorrect++
 		console.log('your total correct: ' + numCorrect)
 		console.log('you hit the correct answer!')
@@ -234,7 +238,8 @@ app.post('/completed/', (req, res) => {
 	console.log('your average was ' + userAverage);
 	var completed = req.body.endGame
 	if (completed) {
-		db.users.update({totalCorrect: numCorrect, totalWrong: numIncorrect, average: userAverage}, {
+
+  db.users.update({totalCorrect: numCorrect, totalWrong: numIncorrect, average: userAverage}, {
 				where: {
 					email:req.user.email
 				}
@@ -287,6 +292,7 @@ function getProductWithWagman() {
 				details: results[1].data,
 				prices: []
 			};
+
 			// Check to  see if product has an image in wegman API. If not, render a kitty in its place.
 			if (product.details.tradeIdentifiers[0].images.length === 0)
 			 	{
@@ -305,15 +311,14 @@ function getProductWithWagman() {
 // Randomize prices retrieved in above function; create shuffled array to send to game.ejs
 function createRandomPrices(product) {
 	const price1 = product.pricing.price;
-	const price2 = _.round(price1 - .2, [precision=2]);
-	const price3 = _.round(price1 + 1, [precision=2]);
-	const price4 = _.round(price1 + 2, [precision=2]);
+	const price2 = _.round(price1 - .2, [precision = 2]);
+	const price3 = _.round(price1 + 1, [precision = 2]);
+	const price4 = _.round(price1 + 2, [precision = 2]);
 	const pricesSet = [price1, price2, price3, price4];
 	// Shuffle the array
 	var shuffledPrices = _.shuffle(pricesSet);
 	return shuffledPrices;
 };
-
 // Hosting on port 5000
 app.listen('5000', function() {
     console.log('Listening on port 5000')
