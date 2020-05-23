@@ -35,6 +35,142 @@ const axios = require('axios');
 const express = require('express');
 const app = express();
 
+// zach's passport code
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config()
+};
+
+const session = require('express-session');
+const passport = require('passport');
+const googleStrategy = require('passport-google-oauth20').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
+const bcrypt = require('bcrypt');
+const flash = require('express-flash');
+const methodOverride = require('method-override');
+const initializePassport = require('./passport-config'); //referencing the location where we initialize passport //initializing from passport-config
+initializePassport(
+    passport,
+    email => db.users.findOne({ where: {email: email} }),
+    id => db.users.findByPk(id)
+    );
+
+//need to change route for local from login to auth/local
+
+// const users = []; 
+
+app.use(express.urlencoded({ extended: false })); //this allows for the fields (password/email) on the form page to be access inside the req variable inside the login POST method
+app.use(flash())
+app.use(session({
+    secret: process.env.SESSION_SECRET, //We need to ask about this
+    resave: false,//should we resave session variables if nothing changes? 
+    saveUninitialized: false //should we save an empty value in the session if there is not value?
+}));
+app.use(methodOverride('_method'));
+
+//make sure to always put the initialize before the passport.session
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new googleStrategy({
+    clientID: process.env.GOOGLE_CLIENTID,
+    clientSecret: process.env.GOOGLE_SECRETID,
+    callbackURL: 'http://localhost:5000/auth/google/callback'
+	}, 
+	function(accessToken, refreshToken, profile, done) 
+	{
+		console.log(profile);
+		// userEmail = profile.emails[0].value; 
+    	db.users.findOrCreate({ 
+			where: {
+					email: profile.emails[0].value, 
+					userName: profile.displayName
+					} 
+		}).then(user => {
+        	if (user) {
+            	return done(null, user[0]);
+        	}
+		})
+		// console.log(profile); 
+	}
+));
+//Check to authenticate if a user is logged in. If not, redirects user to login page
+function checkAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next()
+    }
+    res.redirect('/login')
+}
+//Make sure no uers dont go back to the login page if they are already authenticated
+function checkNotAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return res.redirect('/dashboard')
+    }
+    next()
+}
+
+function logRequest(req, res, next) {
+    console.log('another request');
+    next();
+};
+
+app.get('/auth/google', 
+	passport.authenticate('google', { scope: ['profile','email'] })
+	)
+
+app.get('/auth/google/callback', 
+    passport.authenticate('google', {failureRedirect: '/login'}),
+    function(req, res) {
+		console.log("whatever");
+        res.redirect('/login');
+    });
+
+app.get('/login', checkNotAuthenticated, (req, res) => {
+    res.render('login.ejs')
+});
+
+app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/login',
+    failureFlash: true
+}
+))
+
+app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
+    res.render('dashboard');
+})
+
+app.get('/register', checkNotAuthenticated, (req, res) => {
+    res.render('register.ejs', {error: null})
+});
+
+app.post('/register', checkNotAuthenticated, async (req, res) => {
+    try {
+		const hashedPassword = await bcrypt.hash(req.body.password, 10) //includes await since we are using async
+        db.users.create({
+            userName: req.body.name,
+            email: req.body.email,
+            password: hashedPassword
+        })
+        .then(newUser => {
+        console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
+        res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
+        }).catch(e => {
+            res.render('register', {error: 'This email already has a user account.'})
+        })
+    } catch {
+        res.redirect('/register') //If not correct, send user back to register page
+    }
+    // console.log(users) 
+    //req.body.password //corresponds to the "name" (name, email, password) on the form field
+});
+//Create logout function. This function is provided by passport. Envoked using methodOverride
+//Install methodOverride library and require & use
+
+app.delete('/logout', (req, res) => {
+    req.logOut()
+    res.redirect('/login')
+})
+
 // Connect to sequelize database object
 const db = require('./models') 
 db.Sequelize = Sequelize;
@@ -63,7 +199,6 @@ app.get('/products', (req, res) => {
         res.render('game', { product });
     });
 });
-
 
 // Globals for use with express answer logging in below route
 let numCorrect = 0;
@@ -104,8 +239,8 @@ app.post('/completed/', (req, res) => {
 			// see comments below
 			where:
 				{
-					// userName: 'user3', // this needs to come from passport, like a passport ID/username?
-					// email: 'teddy2', // not sure we need this if we can bring in some identifier from passport
+            		// email: req.body.email, need parms from passport user session
+					userName: 'user3', // this needs to come from passport, like a passport ID/username?
 					totalCorrect: numCorrect,
 					totalWrong: numIncorrect,
 					average: userAverage
@@ -185,7 +320,7 @@ function createRandomPrices(product) {
 	return shuffledPrices;
 };
 
-// Hosting on port 3000
-app.listen('3000', function() {
-    console.log('Listening on port 3000')
+// Hosting on port 5000
+app.listen('5000', function() {
+    console.log('Listening on port 5000')
 });
