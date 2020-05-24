@@ -202,7 +202,6 @@ app.get('/products', (req, res) => {
 let numCorrect = 0;
 let numIncorrect = 0;
 let totalAnswered = 0;
-let userAverage = 0;
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
@@ -232,27 +231,22 @@ app.post('/completed/', (req, res) => {
 	console.log('you got ' + numCorrect + ' correct')
 	var completed = req.body.endGame
 	if (completed) {
-		// attempt 1 to get user average score w/ db function
-		// async(() => {
-		// 	return await(users.findAll({
-		// 		attributes: ['totalCorrect', 'totalWrong' [sequelize.fn('AVG', 
-		// 		models.sequelize.col('rating')), 'ratingAvg']],
-		// })
-		// attempt 2 using raw query.
-		sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalwrong)) / (COUNT(totalcorrect) + COUNT(totalwrong))) as average FROM users WHERE email = ?', {
-			replacements: [req.user.email],
-			model: db.users,
-		})
-		// Basically I need to process this query:
+		// Basically I need to process this SQL query:
 		// SELECT ((SUM(totalCorrect) + SUM(totalWrong)) / (COUNT(totalCorrect) + COUNT(totalWrong))) as average
 		// FROM users
 		// WHERE email=req.user.email;
 		// currently working function, but the overall user average is not being updated after each game
+		// make this async/await?
 		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect}, {
 				where: {
 					email:req.user.email
 				}
 			})
+			// attempt 2 using raw query. possible issue w/ replacements?
+			 sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalwrong)) / (COUNT(totalcorrect) + COUNT(totalwrong))) as average FROM users WHERE email = ?', {
+				replacements: [req.user.email],
+				model: db.users
+		})
 			// need to fix this so it works with new update function
 			// .spread(function(scoreLogged, updated) {
 			// 	console.log(scoreLogged.get({
