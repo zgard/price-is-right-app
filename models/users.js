@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     totalcorrect: DataTypes.INTEGER,
     totalwrong: DataTypes.INTEGER,
+    totalanswered: DataTypes.INTEGER,
     average: DataTypes.DOUBLE
   }, {timestamps: false});
   users.associate = function(models) {
