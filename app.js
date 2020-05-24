@@ -78,7 +78,7 @@ passport.use(new googleStrategy({
     	db.users.findOrCreate({ 
 			where: {
 					email: profile.emails[0].value, 
-					user_name: profile.displayName
+					username: profile.displayName
 					} 
 		}).then(user => {
         	if (user) {
@@ -145,12 +145,12 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
     try {
 		const hashedPassword = await bcrypt.hash(req.body.password, 10) //includes await since we are using async
         db.users.create({
-            user_name: req.body.name,
+            username: req.body.name,
             email: req.body.email,
             password: hashedPassword
         })
         .then(newUser => {
-        console.log(`New user ${newUser.user_name}, with id ${newUser.id} has been created.`);
+        console.log(`New user ${newUser.username}, with id ${newUser.id} has been created.`);
         res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
         }).catch(e => {
             res.render('register', {error: 'This email already has a user account.'})
@@ -241,7 +241,7 @@ app.post('/completed/', (req, res) => {
 		// 		models.sequelize.col('rating')), 'ratingAvg']],
 		// })
 		// attempt 2 using raw query.
-		sequelize.query('SELECT ((SUM(totalCorrect) + SUM(totalWrong)) / (COUNT(totalCorrect) + COUNT(totalWrong))) as average FROM users WHERE email = ?', {
+		sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalwrong)) / (COUNT(totalcorrect) + COUNT(totalwrong))) as average FROM users WHERE email = ?', {
 			replacements: [req.user.email],
 			model: db.users,
 		})
@@ -250,7 +250,7 @@ app.post('/completed/', (req, res) => {
 		// FROM users
 		// WHERE email=req.user.email;
 		// currently working function, but the overall user average is not being updated after each game
-		db.users.update({total_correct: numCorrect, total_wrong: numIncorrect, average: userAverage}, {
+		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect, average: userAverage}, {
 				where: {
 					email:req.user.email
 				}
