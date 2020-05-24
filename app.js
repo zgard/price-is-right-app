@@ -248,7 +248,7 @@ app.post('/completed/', (req, res) => {
 		// FROM users
 		// WHERE email=req.user.email;
 		// currently working function, but the overall user average is not being updated after each game
-		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect, average: userAverage}, {
+		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect}, {
 				where: {
 					email:req.user.email
 				}
