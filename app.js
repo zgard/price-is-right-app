@@ -230,7 +230,6 @@ app.post('/completed/', (req, res) => {
 	totalAnswered = numCorrect + numIncorrect;
 	console.log('you answered ' + totalAnswered + ' in total');
 	console.log('you got ' + numCorrect + ' correct')
-	userAverage = numCorrect / totalAnswered;
 	console.log('your average was ' + userAverage);
 	var completed = req.body.endGame
 	if (completed) {
