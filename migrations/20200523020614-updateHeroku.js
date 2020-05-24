@@ -24,6 +24,9 @@ module.exports = {
       totalwrong: {
         type: Sequelize.INTEGER
       },
+      totalanswered: {
+        type: Sequelize.INTEGER
+      },
       average: {
         type: Sequelize.DOUBLE
       }
