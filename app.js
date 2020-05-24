@@ -229,25 +229,21 @@ app.post('/completed/', (req, res) => {
 	totalAnswered = numCorrect + numIncorrect;
 	console.log('you answered ' + totalAnswered + ' in total');
 	console.log('you got ' + numCorrect + ' correct')
+	console.log('you got ' + numIncorrect + ' wrong')
 	var completed = req.body.endGame
 	if (completed) {
-		// Basically I need to process this SQL query:
-		// SELECT ((SUM(totalCorrect) + SUM(totalWrong)) / (COUNT(totalCorrect) + COUNT(totalWrong))) as average
-		// FROM users
-		// WHERE email=req.user.email;
-		// currently working function, but the overall user average is not being updated after each game
-		// make this async/await?
-		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect}, {
+		// Currently working function, but the overall user average is not being updated after each game
+		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect, totalanswered: totalAnswered }, {
 				where: {
 					email:req.user.email
 				}
 			})
-			// attempt 2 using raw query. possible issue w/ replacements?
-			 sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalwrong)) / (COUNT(totalcorrect) + COUNT(totalwrong))) as average FROM users WHERE email = ?', {
+			// Attempt 2 using raw query. This query works in pgadmin. Issue with async/await?
+			 sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalanswered)) / (COUNT(totalcorrect) + COUNT(totalanswered))) as average FROM users WHERE email = ?', {
 				replacements: [req.user.email],
 				model: db.users
 		})
-			// need to fix this so it works with new update function
+			// Need to fix this so it works with new update function
 			// .spread(function(scoreLogged, updated) {
 			// 	console.log(scoreLogged.get({
 			// 		plain: true
