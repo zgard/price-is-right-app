@@ -234,6 +234,22 @@ app.post('/completed/', (req, res) => {
 	console.log('your average was ' + userAverage);
 	var completed = req.body.endGame
 	if (completed) {
+		// attempt 1 to get user average score w/ db function
+		// async(() => {
+		// 	return await(users.findAll({
+		// 		attributes: ['totalCorrect', 'totalWrong' [sequelize.fn('AVG', 
+		// 		models.sequelize.col('rating')), 'ratingAvg']],
+		// })
+		// attempt 2 using raw query.
+		sequelize.query('SELECT ((SUM(totalCorrect) + SUM(totalWrong)) / (COUNT(totalCorrect) + COUNT(totalWrong))) as average FROM users WHERE email = ?', {
+			replacements: [req.user.email],
+			model: db.users,
+		})
+		// Basically I need to process this query:
+		// SELECT ((SUM(totalCorrect) + SUM(totalWrong)) / (COUNT(totalCorrect) + COUNT(totalWrong))) as average
+		// FROM users
+		// WHERE email=req.user.email;
+		// currently working function, but the overall user average is not being updated after each game
 		db.users.update({totalCorrect: numCorrect, totalWrong: numIncorrect, average: userAverage}, {
 				where: {
 					email:req.user.email
@@ -250,7 +266,7 @@ app.post('/completed/', (req, res) => {
 			// 		console.log('This entry was already made')
 			// 	}
 			// })
-			.then(res.redirect('/dashboard')) // this should redirect to the dashboard where it displays the user stats.
+			.then(res.redirect('/dashboard')) // Redirect to the dashboard where it displays the user stats.
 	}
 });
 
