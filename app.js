@@ -80,13 +80,13 @@ passport.use(new googleStrategy({
 		// userEmail = profile.emails[0].value; 
 		db.users.findOrCreate({
 			where: {
-				email: profile.emails[0].value,
-				userName: profile.displayName
-			}
+					email: profile.emails[0].value, 
+					username: profile.displayName
+					} 
 		}).then(user => {
-			if (user) {
-				return done(null, user[0]);
-			}
+        	if (user) {
+            	return done(null, user[0]);
+        	}
 		})
 	}
 ));
@@ -147,22 +147,27 @@ app.get('/register', checkNotAuthenticated, (req, res) => {
 app.post('/register', checkNotAuthenticated, async (req, res) => {
 	try {
 		const hashedPassword = await bcrypt.hash(req.body.password, 10) //includes await since we are using async
-		db.users.create({
-			userName: req.body.name,
-			email: req.body.email,
-			password: hashedPassword
-		})
-			.then(newUser => {
-				console.log(`New user ${newUser.userName}, with id ${newUser.id} has been created.`);
-				res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
-			}).catch(e => {
-				res.render('register', { error: 'This email already has a user account.' })
-			})
-	} catch {
-		res.redirect('/register') //If not correct, send user back to register page
-	}
-	// console.log(users) 
-	//req.body.password //corresponds to the "name" (name, email, password) on the form field
+        db.users.create({
+            username: req.body.name,
+            email: req.body.email,
+			password: hashedPassword,
+			totalcorrect: 0,
+			totalwrong: 0,
+			totalanswered: 0,
+			average: 0
+        })
+        .then(newUser => {
+        console.log(`New user ${newUser.username}, with id ${newUser.id} has been created.`);
+        res.redirect('/login')//If everthing is correct, redirect user to login page to continue loggin in
+        }).catch(e => {
+            res.render('register', {error: 'This email already has a user account.'})
+        })
+    } catch {
+        res.redirect('/register') //If not correct, send user back to register page
+    }
+    // console.log(users) 
+    //req.body.password //corresponds to the "name" (name, email, password) on the form field
+
 });
 // Create logout function. This function is provided by passport. Envoked using methodOverride
 // Install methodOverride library and require & use
@@ -207,7 +212,7 @@ app.get('/products', (req, res) => {
 let numCorrect = 0;
 let numIncorrect = 0;
 let totalAnswered = 0;
-let userAverage = 0;
+let gameAverage = 0;
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
@@ -235,28 +240,26 @@ app.post('/completed/', (req, res) => {
 	totalAnswered = numCorrect + numIncorrect;
 	console.log('you answered ' + totalAnswered + ' in total');
 	console.log('you got ' + numCorrect + ' correct')
-	userAverage = numCorrect / totalAnswered;
-	console.log('your average was ' + userAverage);
+	console.log('you got ' + numIncorrect + ' wrong')
+	gameAverage = (numCorrect / totalAnswered) * 100;
+	const roundedAverage = _.round(gameAverage, 2)
+	console.log('you averaged ' + roundedAverage + '%');
 	var completed = req.body.endGame
+  
 	if (completed) {
-
-		db.users.update({ totalCorrect: numCorrect, totalWrong: numIncorrect, average: userAverage }, {
-			where: {
-				email: req.user.email
-			}
-		})
-			// need to fix this so it works with new update function
-			// .spread(function(scoreLogged, updated) {
-			// 	console.log(scoreLogged.get({
-			// 		plain: true
-			// 	}))
-			// 	if (updated) {
-			// 		console.log('Scores were added to database')
-			// 	} else {
-			// 		console.log('This entry was already made')
-			// 	}
-			// })
-			.then(res.redirect('/dashboard')) // this should redirect to the dashboard where it displays the user stats.
+		// Currently working function, but the overall user average is not being updated after each game
+		db.users.increment({totalcorrect: numCorrect, totalwrong: numIncorrect, totalanswered: totalAnswered }, {
+				where: {
+					email:req.user.email
+				}
+			})
+			.then(function() {
+				return sequelize.query('UPDATE users SET average = (totalcorrect / totalanswered) * 100 WHERE email = ?', {
+				replacements: [req.user.email],
+				model: db.users
+				})
+			})
+			res.redirect('/dashboard') // Redirect to the dashboard where it displays the user stats.
 	}
 });
 
