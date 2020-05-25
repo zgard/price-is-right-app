@@ -242,24 +242,8 @@ app.post('/completed/', (req, res) => {
 					email:req.user.email
 				}
 			})
-			// Attempt 2 using raw query. This query works in pgadmin. Issue with async/await?
-			// sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalanswered)) / (COUNT(totalcorrect) + COUNT(totalanswered))) as average FROM users WHERE email = ?', {
-			// 	replacements: [req.user.email],
-			// 	model: db.users
-			// })
-			// Need to fix this so it works with new update function
-			// .spread(function(scoreLogged, updated) {
-			// 	console.log(scoreLogged.get({
-			// 		plain: true
-			// 	}))
-			// 	if (updated) {
-			// 		console.log('Scores were added to database')
-			// 	} else {
-			// 		console.log('This entry was already made')
-			// 	}
-			// })
 			.then(function() {
-				return sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalanswered)) / (COUNT(totalcorrect) + COUNT(totalanswered))) as average FROM users WHERE email = ?', {
+				return sequelize.query('UPDATE users SET average = (totalcorrect / totalanswered) * 100 WHERE email = ?', {
 				replacements: [req.user.email],
 				model: db.users
 				})
