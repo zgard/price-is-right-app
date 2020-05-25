@@ -206,6 +206,7 @@ app.get('/products', (req, res) => {
 let numCorrect = 0;
 let numIncorrect = 0;
 let totalAnswered = 0;
+let gameAverage = 0;
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
@@ -234,6 +235,9 @@ app.post('/completed/', (req, res) => {
 	console.log('you answered ' + totalAnswered + ' in total');
 	console.log('you got ' + numCorrect + ' correct')
 	console.log('you got ' + numIncorrect + ' wrong')
+	gameAverage = (numCorrect / totalAnswered) * 100;
+	const roundedAverage = _.round(gameAverage, 2)
+	console.log('you averaged ' + roundedAverage + '%');
 	var completed = req.body.endGame
 	if (completed) {
 		// Currently working function, but the overall user average is not being updated after each game
