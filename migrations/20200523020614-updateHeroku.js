@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      userName: {
+      username: {
         type: Sequelize.STRING
       },
       email: {
@@ -18,11 +18,14 @@ module.exports = {
       password: {
         type: Sequelize.STRING
       },
-      totalCorrect: {
-        type: Sequelize.INTEGER
+      totalcorrect: {
+        type: Sequelize.DOUBLE
       },
-      totalWrong: {
-        type: Sequelize.INTEGER
+      totalwrong: {
+        type: Sequelize.DOUBLE
+      },
+      totalanswered: {
+        type: Sequelize.DOUBLE
       },
       average: {
         type: Sequelize.DOUBLE
