@@ -1,21 +1,60 @@
-<h1>Please Register</h1>
-<form action="/register" method="POST"><!--POST to a route with the name /register inside of localpp.js-->
-    <div><!--create div for rows needed on form-->
-        <label for="name">Name: </label><!--create lable for the element name-->
-        <input type="text" id="name" name="name" required><!--input text referencing the id name element and 
-            name which is how it is called on the server side. Also add required-->
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Price is Right Registration</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="container">
+        <div class="img">
+            <img src="img/Project_logo.png">
+        </div>
+        <div class="login-content">
+            <% if(messages.error) { %>
+            <%= messages.error %>
+            <% } %>
+            <form action="/register" method="POST">
+                <img src="img/video_game.svg">
+                <h2 class="title">Registration</h2>
+                <div class="input-div name">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Name</h5>
+                        <input name="name" type="text" class="input">
+                    </div>
+                </div>
+                <div class="input-div one">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Email</h5>
+                        <input name="email" type="text" class="input">
+                    </div>
+                </div>
+                <div class="input-div pass">
+                    <div class="i">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Password</h5>
+                        <input name="password" type="password" class="input">
+                    </div>
+                </div>
+                <button type="submit" class="btn">Register</button>
+            </form>
+
+        </div>
     </div>
-    <div><!--create div for rows needed on form-->
-        <label for="email">Email: </label>
-        <input type="text" id="email" name="email" required>
-    </div>
-    <div><!--create div for rows needed on form-->
-        <label for="password">Password: </label>
-        <input type="text" id="password" name="password" required>
-    </div>
-    <button type="submit"> Register</button><!--create a submit button to submit to server-->
-        <% if (error) { %>
-            <p><%= error %></p>
-        <% } %>
-</form>
-<a href="/login">Login</a> <!--create an anchor tag back to login page-->
+    <a href="/login"> Login </a>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+
+</html>
