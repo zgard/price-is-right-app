@@ -147,7 +147,11 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         db.users.create({
             username: req.body.name,
             email: req.body.email,
-            password: hashedPassword
+			password: hashedPassword,
+			totalcorrect: 0,
+			totalwrong: 0,
+			totalanswered: 0,
+			average: 0
         })
         .then(newUser => {
         console.log(`New user ${newUser.username}, with id ${newUser.id} has been created.`);
@@ -233,16 +237,16 @@ app.post('/completed/', (req, res) => {
 	var completed = req.body.endGame
 	if (completed) {
 		// Currently working function, but the overall user average is not being updated after each game
-		db.users.update({totalcorrect: numCorrect, totalwrong: numIncorrect, totalanswered: totalAnswered }, {
+		db.users.increment({totalcorrect: numCorrect, totalwrong: numIncorrect, totalanswered: totalAnswered }, {
 				where: {
 					email:req.user.email
 				}
 			})
 			// Attempt 2 using raw query. This query works in pgadmin. Issue with async/await?
-			 sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalanswered)) / (COUNT(totalcorrect) + COUNT(totalanswered))) as average FROM users WHERE email = ?', {
-				replacements: [req.user.email],
-				model: db.users
-		})
+			// sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalanswered)) / (COUNT(totalcorrect) + COUNT(totalanswered))) as average FROM users WHERE email = ?', {
+			// 	replacements: [req.user.email],
+			// 	model: db.users
+			// })
 			// Need to fix this so it works with new update function
 			// .spread(function(scoreLogged, updated) {
 			// 	console.log(scoreLogged.get({
@@ -254,7 +258,13 @@ app.post('/completed/', (req, res) => {
 			// 		console.log('This entry was already made')
 			// 	}
 			// })
-			.then(res.redirect('/dashboard')) // Redirect to the dashboard where it displays the user stats.
+			.then(function() {
+				return sequelize.query('SELECT ((SUM(totalcorrect) + SUM(totalanswered)) / (COUNT(totalcorrect) + COUNT(totalanswered))) as average FROM users WHERE email = ?', {
+				replacements: [req.user.email],
+				model: db.users
+				})
+			})
+			res.redirect('/dashboard') // Redirect to the dashboard where it displays the user stats.
 	}
 });
 

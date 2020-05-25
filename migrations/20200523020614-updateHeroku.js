@@ -19,13 +19,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       totalcorrect: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DOUBLE
       },
       totalwrong: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DOUBLE
       },
       totalanswered: {
-        type: Sequelize.INTEGER
+        type: Sequelize.DOUBLE
       },
       average: {
         type: Sequelize.DOUBLE

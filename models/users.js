@@ -4,9 +4,9 @@ module.exports = (sequelize, DataTypes) => {
     username: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
-    totalcorrect: DataTypes.INTEGER,
-    totalwrong: DataTypes.INTEGER,
-    totalanswered: DataTypes.INTEGER,
+    totalcorrect: DataTypes.DOUBLE,
+    totalwrong: DataTypes.DOUBLE,
+    totalanswered: DataTypes.DOUBLE,
     average: DataTypes.DOUBLE
   }, {timestamps: false});
   users.associate = function(models) {
