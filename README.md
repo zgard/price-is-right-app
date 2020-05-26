@@ -20,6 +20,7 @@ An item picture, description, and 4 buttons with prices will be shown. The objec
 
 ## Requirements
 * [Express](https://github.com/expressjs/express)
+* [Express-flash](https://github.com/expressjs/flash)
 * [PassportJS](https://github.com/jaredhanson/passport)
 * [PostgreSQL](https://www.postgresql.org/)
 * [Sequelize](https://github.com/sequelize/sequelize)

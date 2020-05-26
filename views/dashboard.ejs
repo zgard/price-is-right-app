@@ -16,17 +16,22 @@
         </div>
         <div class="login-content">
 
-            <form action="/logout?_method=DELETE" method=" POST">
+           <!-- <form>
                 <img src="img/video_game.svg">
                 <h2 class="title">Dashboard</h2>
-
+                <button type="button" class="btn" onclick="window.location.href='/products'">Start Game</button>        
+           </form> -->
+           <form action="/logout?_method=DELETE" method="POST">
+            <img src="img/video_game.svg">
+                <h2 class="title">Dashboard</h2>
                 <button type="button" class="btn" onclick="window.location.href='/products'">Start Game</button>
-                <button type="submit" class="btn" onclick="window.location.href='/login'">Logout</button>
+            <button class="btn" type="submit">Log Out</button>
+           </form>
                 
             <% if(messages.error) { %>
                 <div class="i"> <%= messages.error %>
 				</div>
-                <% } %>
+                <% } %> 
             </div>
             <ul class="list-group">
                 <li class="list-group-item">Total Questions: <%=gameSession.total%></li>
