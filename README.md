@@ -29,10 +29,7 @@ An item picture, description, and 4 buttons with prices will be shown. The objec
 * [MethodOveride](https://github.com/expressjs/method-override)
 * [Bcrypt](https://github.com/topics/bcrypt-nodejs)
 * [Passport-Local](https://github.com/jaredhanson/passport-local)
-<<<<<<< HEAD
-=======
 * [Lodash](https://github.com/lodash/lodash)
->>>>>>> 1b21d23b14e0a1046da1eedda7b1341a5868c7d6
 
 ## Deployment
 * [Heroku](https://www.heroku.com/)
