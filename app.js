@@ -74,7 +74,7 @@ app.use(passport.session());
 passport.use(new googleStrategy({
 	clientID: process.env.GOOGLE_CLIENTID,
 	clientSecret: process.env.GOOGLE_SECRETID,
-	callbackURL: 'https://price-right.herokuapp.com/auth/google/callback'
+	callbackURL: 'http://price-right.herokuapp.com/auth/google/callback'
 },
 	function (accessToken, refreshToken, profile, done) {
 		// userEmail = profile.emails[0].value; 
