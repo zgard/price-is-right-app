@@ -2,8 +2,8 @@
   "name": "price-game",
   "version": "1.0.0",
   "engines": {
-    "node": "*",
-    "npm": "*"
+    "node": "13.7.0",
+    "npm": "6.14.5"
   },
   "main": "app.js",
   "dependencies": {
@@ -29,11 +29,10 @@
   },
   "devDependencies": {
     "dotenv": "^8.2.0",
-    "nodeman": "^1.1.2",
-    "nodemon": "^2.0.4"
+    "nodeman": "1.1.2",
+    "nodemon": "2.0.4"
   },
-    "scripts": {
-    "devStart": "nodemon server.js",
+  "scripts": {
     "start": "nodemon app.js"
   },
   "repository": {
