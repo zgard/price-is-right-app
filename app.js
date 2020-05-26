@@ -208,7 +208,6 @@ let numIncorrect = 0;
 let totalAnswered = 0;
 let gameAverage = 0;
 let gameSession = {};
-let roundedAverage;
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
@@ -245,7 +244,7 @@ app.post('/completed/', (req, res) => {
 		correct: numCorrect,
 		incorrect: numIncorrect,
 		total: totalAnswered,
-		average: roundedAverage
+		average: gameAverage
 	};
 	var completed = req.body.endGame
 	
@@ -268,7 +267,7 @@ app.post('/completed/', (req, res) => {
 				numCorrect = 0;
 				numIncorrect = 0;
 				totalAnswered = 0;
-				roundedAverage = 0;
+				gameAverage = 0;
 			})
 			res.redirect('/dashboard') // Redirect to the dashboard where it displays the user stats
 	}
