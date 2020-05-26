@@ -4,7 +4,7 @@
 
 // remove dotenv when running on heroku
 require('dotenv').config();
-
+const port = process.env.PORT || 8000;
 const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
@@ -333,6 +333,6 @@ function createRandomPrices(product) {
 	return shuffledPrices;
 };
 // Hosting on port 5000
-app.listen('5000', function () {
-	console.log('Listening on port 5000')
+app.listen(port, function () {
+	console.log('Listening on port ' + port)
 });
