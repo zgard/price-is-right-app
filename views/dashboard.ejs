@@ -24,6 +24,7 @@
            <form action="/logout?_method=DELETE" method="POST">
             <img src="img/video_game.svg">
                 <h2 class="title">Dashboard</h2>
+                <h3>Welcome <%=user.username%>!</h3>
                 <button type="button" class="btn" onclick="window.location.href='/products'">Start Game</button>
             <button class="btn" type="submit">Log Out</button>
            </form>

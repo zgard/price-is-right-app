@@ -133,7 +133,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 ))
 
 app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
-	res.render('dashboard', { gameSession });
+	res.render('dashboard', { gameSession, user: req.user });
 })
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
