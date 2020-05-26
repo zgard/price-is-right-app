@@ -16,9 +16,6 @@
 		</div>
 		<div class="login-content">
 
-			<% if(messages.error) { %>
-			<%= messages.error %>
-			<% } %>
 			<form action="/login" method="POST">
 				<img src="img/video_game.svg">
 				<h2 class="title">Game App</h2>
@@ -42,7 +39,13 @@
 				</div>
 				<a href="/register">Register</a>
 				<button type="submit" class="btn">Login</button>
-				<button type="button" class="btn">Login Via Google</button>
+				<!--<button type="button" class="btn">Login Via Google</button>-->
+				<button type="button" class="btn" onclick="window.location.href='/auth/google'">Login Via Google</button>
+				
+			<% if(messages.error) { %>
+				<div class="i"> <%= messages.error %>
+				</div>
+				<% } %>
 			</form>
 		</div>
 	</div>

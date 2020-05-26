@@ -39,6 +39,13 @@ body{
 	text-align: center;
 }
 
+.login-group{
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	text-align: center;
+}
+
 .img img{
 	width: 500px;
 }
