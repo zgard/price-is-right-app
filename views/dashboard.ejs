@@ -1,5 +1,43 @@
-<h1 style="font-style: italic;">Welcome to your dashboard</h1>
+<!DOCTYPE html>
+<html>
 
-    <form action="/logout?_method=DELETE" method="POST">
-                <br> <button type="submit">Log Out</button> </br>
-    </form>
+<head>
+    <title>Price is Right Dashboard</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="container">
+        <div class="img">
+            <img src="img/Project_logo.png">
+        </div>
+        <div class="login-content">
+
+            <form action="/logout?_method=DELETE" method=" POST">
+                <img src="img/video_game.svg">
+                <h2 class="title">Dashboard</h2>
+
+                <button type="button" class="btn" onclick="window.location.href='/products'">Start Game</button>
+                <button type="submit" class="btn" onclick="window.location.href='/login'">Logout</button>
+                
+            <% if(messages.error) { %>
+                <div class="i"> <%= messages.error %>
+				</div>
+                <% } %>
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">Total Questions: <%=gameSession.total%></li>
+                <li class="list-group-item active">Number Correct: <%=gameSession.correct%></li>
+                <li class="list-group-item">Number Incorrect: <%=gameSession.incorrect%></li>
+                <li class="list-group-item">Average Correct: <%=gameSession.average%>%</li>
+            </ul> 
+        </div>
+            </form>
+
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+
+</html>

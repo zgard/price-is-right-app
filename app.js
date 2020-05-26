@@ -4,7 +4,7 @@
 
 // remove dotenv when running on heroku
 require('dotenv').config();
-
+const port = process.env.PORT || 8000;
 const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
@@ -74,7 +74,7 @@ app.use(passport.session());
 passport.use(new googleStrategy({
 	clientID: process.env.GOOGLE_CLIENTID,
 	clientSecret: process.env.GOOGLE_SECRETID,
-	callbackURL: 'http://localhost:5000/auth/google/callback'
+	callbackURL: 'https://price-right.herokuapp.com/auth/google/callback' // might need to use http instead of https for the callback url. 
 },
 	function (accessToken, refreshToken, profile, done) {
 		// userEmail = profile.emails[0].value; 
@@ -96,14 +96,14 @@ function checkAuthenticated(req, res, next) {
 		return next()
 	}
 	res.redirect('/login')
-}
+};
 // Make sure no uers dont go back to the login page if they are already authenticated
 function checkNotAuthenticated(req, res, next) {
 	if (req.isAuthenticated()) {
 		return res.redirect('/dashboard')
 	}
 	next()
-}
+};
 
 function logRequest(req, res, next) {
 	console.log('another request');
@@ -125,10 +125,6 @@ app.get('/login', checkNotAuthenticated, (req, res) => {
 	res.render('login.ejs')
 });
 
-// app.get('/user', function(req, res, next) {
-// 	res.send(req.user.email);
-// })
-
 app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 	successRedirect: '/dashboard',
 	failureRedirect: '/login',
@@ -137,7 +133,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 ))
 
 app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
-	res.render('dashboard');
+	res.render('dashboard', { gameSession });
 })
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
@@ -166,8 +162,7 @@ app.post('/register', checkNotAuthenticated, async (req, res) => {
         res.redirect('/register') //If not correct, send user back to register page
     }
     // console.log(users) 
-    //req.body.password //corresponds to the "name" (name, email, password) on the form field
-
+    //req.body.password // corresponds to the "name" (name, email, password) on the form field
 });
 // Create logout function. This function is provided by passport. Envoked using methodOverride
 // Install methodOverride library and require & use
@@ -202,7 +197,6 @@ app.get('/products', (req, res) => {
 		if (!product) {
 			console.log("redirected");
 			return res.redirect('/products');
-
 		}
 		res.render('game', { product });
 	});
@@ -213,6 +207,7 @@ let numCorrect = 0;
 let numIncorrect = 0;
 let totalAnswered = 0;
 let gameAverage = 0;
+let gameSession = {};
 // Let userAnswer = null; don't think we need a truse/false condition for answers
 
 app.post('/answer/', (req, res) => {
@@ -244,22 +239,37 @@ app.post('/completed/', (req, res) => {
 	gameAverage = (numCorrect / totalAnswered) * 100;
 	const roundedAverage = _.round(gameAverage, 2)
 	console.log('you averaged ' + roundedAverage + '%');
+	// Save the current game session to an array that gets pushed w/ EJS render
+	gameSession = {
+		correct: numCorrect,
+		incorrect: numIncorrect,
+		total: totalAnswered,
+		average: gameAverage
+	};
 	var completed = req.body.endGame
-  
+	
 	if (completed) {
-		// Currently working function, but the overall user average is not being updated after each game
+		// Update the database
 		db.users.increment({totalcorrect: numCorrect, totalwrong: numIncorrect, totalanswered: totalAnswered }, {
 				where: {
 					email:req.user.email
 				}
 			})
+			// Compute user average score
 			.then(function() {
 				return sequelize.query('UPDATE users SET average = (totalcorrect / totalanswered) * 100 WHERE email = ?', {
 				replacements: [req.user.email],
 				model: db.users
 				})
 			})
-			res.redirect('/dashboard') // Redirect to the dashboard where it displays the user stats.
+			// Reset the game session numbers so next game starts with blank slate
+			.then(function(){
+				numCorrect = 0;
+				numIncorrect = 0;
+				totalAnswered = 0;
+				gameAverage = 0;
+			})
+			res.redirect('/dashboard') // Redirect to the dashboard where it displays the user stats
 	}
 });
 
@@ -323,6 +333,6 @@ function createRandomPrices(product) {
 	return shuffledPrices;
 };
 // Hosting on port 5000
-app.listen('5000', function () {
-	console.log('Listening on port 5000')
+app.listen(port, function () {
+	console.log('Listening on port ' + port)
 });
