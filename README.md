@@ -9,7 +9,7 @@ To build a Game by utilizing backend development skills.
 ## Instructions
 Once logged in, click on the start game button from your dashboard.  
 
-An item picture, description, and 4 buttons with prices will be shown. The objective is to click on the button with the correct price. When you would like to finish, click on the End Game button.  
+An item picture, description, and 4 buttons with prices will be shown. The objective is to click on the button with the correct price. When you would like to finish, click on the End Game button.  The total questions, number correct, number incorrect and average percentage will appear in bottom left of the screen. The score is based on the results of the last finished game. 
 
 ## Table of Contents:
  [Requirements]
