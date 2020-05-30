@@ -191,14 +191,17 @@ app.set('views', 'views');
 app.use(express.static(__dirname + '/public'))
 app.use(express.urlencoded({ extended: false })); //this allows for the fields (password/email) on the form page to be access inside the req variable inside the login POST method
 app.use(flash())
+
 // Express route where game is played and JSON info is fetched from Wegman API
+let lastAnswer = true;
 app.get('/products', (req, res) => {
 	getProductWithWagman().then((product) => {
 		if (!product) {
 			console.log("redirected");
 			return res.redirect('/products');
 		}
-		res.render('game', { product });
+		let lastAnswer = req.session.valid;
+		res.render('game', { product, lastAnswer });
 	});
 });
 
@@ -208,7 +211,7 @@ let numIncorrect = 0;
 let totalAnswered = 0;
 let gameAverage = 0;
 let gameSession = {};
-// Let userAnswer = null; don't think we need a truse/false condition for answers
+
 
 app.post('/answer/', (req, res) => {
 	console.log(req.user)
@@ -218,11 +221,13 @@ app.post('/answer/', (req, res) => {
 	console.log('the correct price: ' + correctPrice);
 	if (answer == correctPrice) {
 		numCorrect++
+		req.session.valid = true; 
 		console.log('your total correct: ' + numCorrect)
 		console.log('you hit the correct answer!')
 	}
 	else {
 		numIncorrect++
+		req.session.valid = false; 
 		console.log('your total incorrect: ' + numIncorrect)
 		console.log("you hit the incorrect answer!")
 
@@ -282,7 +287,7 @@ function randomInteger(array) {
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
 	const url = 'https://api.wegmans.io';
-	const categories = ['steak', 'milk', 'bread', 'fruits', 'soup', 'pasta'];
+	const categories = ['steak', 'milk', 'bread', 'fruit', 'soup', 'pasta'];
 	let sku = null;
 	const category = categories[randomInteger(categories)];
 	return axios

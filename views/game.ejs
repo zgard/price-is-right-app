@@ -48,6 +48,11 @@
             </div>
         </div>
     </div>
+    <% if (lastAnswer) { %>
+    <h2> Your last selection was <span style="color: green">CORRECT!</span></h2>
+    <%} else { %>
+    <h2> Your last selection was <span style="color: red">INCORRECT</span></h2>
+    <% } %>
 <div>
 
 <!-- Timer on top of page -->
