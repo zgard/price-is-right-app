@@ -1,13 +1,14 @@
 <!-- Bring in bootstrap -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 
 <!-- Function with random product -->
 <div class="container-fluid text-center">
-    <h1>
+    <h1 class="i bg-light"">
         Welcome to the Price is Right game!
     </h1>
     <br />
-    <h2>What is the price of this product?</h2>
+    <h2 class =" i bg-light"">What is the price of this product?</h2>
 
     <div class="row justify-content-center">
         <div class="col-sm-6 d-flex">
@@ -40,13 +41,16 @@
                             <input type="hidden" name="correctPrice" value="<%= product.price %>">
                             <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][3]%>>
                         </form>
+
                     </div>
+                    <form method="POST" action="/completed">
+                        <input class="btn bg-danger text-white btn-lg btn-block" type="submit" name="endGame"
+                            value="End Game"></input>
+                    </form>
                 </div>
-                <form method="POST" action="/completed">
-                    <input class="btn btn-primary btn-lg btn-block" type="submit" name="endGame" value="End Game"></input>
-                </form>
             </div>
         </div>
+
     </div>
     
     <% if (lastAnswer) { %>
@@ -56,8 +60,9 @@
     <% } %>
 <div>
 
-<!-- Timer on top of page -->
-<!-- <script>
+
+            <!-- Timer on top of page -->
+            <!-- <script>
  window.onload = function () {
     var display = document.querySelector('#time'),
         timer = new CountDownTimer(5),

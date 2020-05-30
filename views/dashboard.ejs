@@ -10,23 +10,36 @@
 </head>
 
 <body>
+    <!-- <h5>Instructions: Once logged in, click on the start game button from your dashboard.  
+        An item picture, description, and 4 buttons with prices will be shown. 
+        The objective is to click on the button with the correct price. 
+        When you would like to finish, click on the End Game button.  
+        The total questions, number correct, number incorrect and average percentage will appear in bottom left of the screen. 
+        The score is based on the results of the last finished game. 
+    </h5> -->
     <div class="container">
         <div class="img">
             <img src="img/Project_logo.png">
         </div>
         <div class="login-content">
 
-            <form action="/logout?_method=DELETE" method=" POST">
+           <!-- <form>
                 <img src="img/video_game.svg">
                 <h2 class="title">Dashboard</h2>
-
+                <button type="button" class="btn" onclick="window.location.href='/products'">Start Game</button>        
+           </form> -->
+           <form action="/logout?_method=DELETE" method="POST">
+            <img src="img/video_game.svg">
+                <h2 class="title">Dashboard</h2>
+                <h3>Welcome <%=user.username%>!</h3>
                 <button type="button" class="btn" onclick="window.location.href='/products'">Start Game</button>
-                <button type=" submit" class="btn">Logout</button>
+            <button class="btn" type="submit">Log Out</button>
+           </form>
                 
             <% if(messages.error) { %>
                 <div class="i"> <%= messages.error %>
 				</div>
-                <% } %>
+                <% } %> 
             </div>
             <ul class="list-group">
                 <li class="list-group-item">Total Questions: <%=gameSession.total%></li>

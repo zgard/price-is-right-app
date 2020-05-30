@@ -183,6 +183,7 @@ a:hover{
 	margin: 1rem 0;
 	cursor: pointer;
 	transition: .5s;
+	justify-content: space-between
 }
 .btn:hover{
 	background-position: right;

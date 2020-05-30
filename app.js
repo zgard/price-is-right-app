@@ -4,7 +4,7 @@
 
 // remove dotenv when running on heroku
 require('dotenv').config();
-
+const port = process.env.PORT || 8000;
 const apiKey = process.env.API_KEY;
 // const apiKey = 'insert here'; for hard-coded api key
 
@@ -74,7 +74,7 @@ app.use(passport.session());
 passport.use(new googleStrategy({
 	clientID: process.env.GOOGLE_CLIENTID,
 	clientSecret: process.env.GOOGLE_SECRETID,
-	callbackURL: 'http://localhost:5000/auth/google/callback'
+	callbackURL: 'https://price-right.herokuapp.com/auth/google/callback' // might need to use http instead of https for the callback url. 
 },
 	function (accessToken, refreshToken, profile, done) {
 		// userEmail = profile.emails[0].value; 
@@ -133,7 +133,7 @@ app.post('/login', checkNotAuthenticated, passport.authenticate('local', {
 ))
 
 app.get('/dashboard', checkAuthenticated, logRequest, (req, res, next) => {
-	res.render('dashboard', { gameSession });
+	res.render('dashboard', { gameSession, user: req.user });
 })
 
 app.get('/register', checkNotAuthenticated, (req, res) => {
@@ -342,6 +342,6 @@ function createRandomPrices(product) {
 };
 
 // Hosting on port 5000
-app.listen('5000', function () {
-	console.log('Listening on port 5000')
+app.listen(port, function () {
+	console.log('Listening on port ' + port)
 });
