@@ -287,7 +287,7 @@ function randomInteger(array) {
 function getProductWithWagman() {
 	const key = '&Subscription-key=c455d00cb0f64e238a5282d75921f27e';
 	const url = 'https://api.wegmans.io';
-	const categories = ['steak', 'milk', 'bread', 'fruit', 'soup', 'pasta'];
+	const categories = ['steak', 'milk', 'bread', 'fruit', 'soup', 'pasta', 'vegetables'];
 	let sku = null;
 	const category = categories[randomInteger(categories)];
 	return axios
@@ -298,29 +298,32 @@ function getProductWithWagman() {
 			sku = results.data.results[randomInteger(results.data.results)].sku;
 			if (sku)
 				return Promise.all([
-					axios.get(
-						`${url}/products/${sku}/prices/68?api-version=2018-10-18${key}`
-					),
-					axios.get(`${url}/products/${sku}?api-version=2018-10-18${key}`),
+					axios.get(`${url}/products/${sku}/prices/68?api-version=2018-10-18${key}`),
+					axios.get(`${url}/products/${sku}?api-version=2018-10-18${key}`)
 				]);
 		})
 		.then((results) => {
 			const product = {
 				sku,
-				pricing: results[0].data,
-				details: results[1].data,
+                price: results[0].data.price,
+                description: results[1].data.descriptions.consumer,
+                imageURL: null,
 				prices: []
 			};
 
 			// Check to  see if product has an image in wegman API. If not, render a kitty in its place.
-			if (product.details.tradeIdentifiers[0].images.length === 0) {
+			if (typeof results[1].data.tradeIdentifiers[0].images[0] === 'undefined') {
 				// Change the array to this placeholder image if blank
-				product.details.tradeIdentifiers[0].images[0] = 'https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg'
-			}
+				product.imageURL = 'https://cdn.mos.cms.futurecdn.net/VSy6kJDNq2pSXsCzb6cvYF-650-80.jpg';
+            } else {
+                product.imageURL = results[1].data.tradeIdentifiers[0].images[0];
+            }
+            
 			return product;
 		})
 		.then((product) => {
-			product['prices'].push(createRandomPrices(product));
+            product['prices'].push(createRandomPrices(product));
+            console.log(product);
 			return product;
 		})
 		.catch((e) => console.error(e));
@@ -328,7 +331,7 @@ function getProductWithWagman() {
 
 // Randomize prices retrieved in above function; create shuffled array to send to game.ejs
 function createRandomPrices(product) {
-	const price1 = product.pricing.price;
+	const price1 = product.price;//changed from product.pricing.price
 	const price2 = _.round(price1 - .2, [precision = 2]);
 	const price3 = _.round(price1 + 1, [precision = 2]);
 	const price4 = _.round(price1 + 2, [precision = 2]);
@@ -337,6 +340,7 @@ function createRandomPrices(product) {
 	var shuffledPrices = _.shuffle(pricesSet);
 	return shuffledPrices;
 };
+
 // Hosting on port 5000
 app.listen('5000', function () {
 	console.log('Listening on port 5000')

@@ -12,32 +12,32 @@
     <div class="row justify-content-center">
         <div class="col-sm-6 d-flex">
             <div class="card text-center mx-auto mt-5 bg-light" style="width: 32rem; border-radius: 5px; border: 3px solid">
-                <img class="card-img-top" src="<%= product.details.tradeIdentifiers[0].images[0] %>" alt="">  
+                <img class="card-img-top" src="<%= product.imageURL %>" alt="">  
                 <h3>
-                    <%= product.details.name %>
+                    <%= product.description %>
                 </h3>
                 <div class="row my-2 mx-auto">
                     <div class="col-sm"> 
                         <form method="POST" action="/answer">
-                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input type="hidden" name="correctPrice" value="<%= product.price %>">
                             <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][0]%>>
                         </form>
                     </div>
                     <div class="col-sm">
                         <form method="POST" action="/answer">
-                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input type="hidden" name="correctPrice" value="<%= product.price %>">
                             <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][1]%>>
                         </form>
                     </div>
                     <div class="col-sm">
                         <form method="POST" action="/answer">
-                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input type="hidden" name="correctPrice" value="<%= product.price %>">
                             <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][2]%>>
                         </form>
                     </div>
                     <div class="col-sm">
                         <form method="POST" action="/answer">
-                            <input type="hidden" name="correctPrice" value="<%= product.pricing.price %>">
+                            <input type="hidden" name="correctPrice" value="<%= product.price %>">
                             <input class="btn btn-primary" type="submit" name="answer" value=<%= product.prices[0][3]%>>
                         </form>
                     </div>
@@ -48,6 +48,7 @@
             </div>
         </div>
     </div>
+    
     <% if (lastAnswer) { %>
     <h2> Your last selection was <span style="color: green">CORRECT!</span></h2>
     <%} else { %>
